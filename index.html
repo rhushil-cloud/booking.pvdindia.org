@@ -151,10 +151,12 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // 1. Read Query Parameters
-      const urlParams = new URLSearchParams(window.location.search);
-      const pincode = urlParams.get('pincode') || '412307';
-      // Automatically extract the last 10 digits regardless of +91 or leading 0
-const rawPhone = urlParams.get('phone') || '9373194945';
+      // Read URL Query Parameters
+const urlParams = new URLSearchParams(window.location.search);
+const pincode = urlParams.get('pincode') || '412307';
+const phoneRaw = urlParams.get('phone') || '9373194945';
+const phone = phoneRaw.replace(/\D/g, '').slice(-10);
+const bsuid = urlParams.get('bsuid') || `91${phone}`;
 const phone = rawPhone.replace(/\D/g, '').slice(-10);
 
       document.getElementById('displayPincode').innerText = pincode;
@@ -215,22 +217,22 @@ const phone = rawPhone.replace(/\D/g, '').slice(-10);
         }
       });
 
-      // 4. Submit Handler linked to Cloud Run API
-      const bookingForm = document.getElementById('bookingForm');
-      const submitBtn = document.getElementById('submitBtn');
-      const errorMsg = document.getElementById('errorMsg');
-
-      bookingForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorMsg.classList.add('hidden');
-
-        const selectedTestIds = Array.from(document.querySelectorAll('.test-checkbox'))
-          .filter(c => c.checked)
-          .map(c => c.value);
-
-        if (selectedTestIds.length === 0) {
-          errorMsg.innerText = 'Please select at least one diagnostic test.';
-          errorMsg.classList.remove('hidden');
+     const payload = {
+  customer_name: document.getElementById('customer_name').value.trim(),
+  phone_number: phone,
+  bsuid: bsuid, // Pass BSUID to backend for WhatsApp webhook targeting
+  user_role: document.getElementById('user_role').value,
+  pincode: pincode,
+  address: document.getElementById('address').value.trim(),
+  animal_type: document.getElementById('animal_type').value,
+  cow_id: document.getElementById('cow_id').value.trim(),
+  selected_test_ids: selectedTestIds,
+  visit_date: document.getElementById('visit_date').value,
+  visit_slot: document.getElementById('visit_slot').value,
+  latitude: userLat,
+  longitude: userLng,
+  consent_given: document.getElementById('consent_given').checked
+};
           return;
         }
 
