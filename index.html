@@ -153,7 +153,9 @@
       // 1. Read Query Parameters
       const urlParams = new URLSearchParams(window.location.search);
       const pincode = urlParams.get('pincode') || '412307';
-      const phone = urlParams.get('phone') || '919373194945';
+      // Automatically extract the last 10 digits regardless of +91 or leading 0
+const rawPhone = urlParams.get('phone') || '9373194945';
+const phone = rawPhone.replace(/\D/g, '').slice(-10);
 
       document.getElementById('displayPincode').innerText = pincode;
       document.getElementById('displayPhone').innerText = phone;
