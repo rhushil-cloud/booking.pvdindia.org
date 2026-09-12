@@ -138,7 +138,7 @@
         <label for="consent_given">I confirm sample details and consent to PVD diagnostic lab terms.</label>
       </div>
 
-      <!-- Feedback Alert -->
+      <!-- Error Message Banner -->
       <div id="errorMsg" class="hidden p-3 bg-red-50 text-red-700 border border-red-200 text-xs rounded-lg"></div>
 
       <!-- Submit Button -->
@@ -150,7 +150,7 @@
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      // 1. Read URL Query Parameters
+      // 1. Read Query Parameters
       const urlParams = new URLSearchParams(window.location.search);
       const pincode = urlParams.get('pincode') || '412307';
       const phone = urlParams.get('phone') || '919373194945';
@@ -163,12 +163,12 @@
       tomorrow.setDate(tomorrow.getDate() + 1);
       document.getElementById('visit_date').value = tomorrow.toISOString().split('T')[0];
 
-      // 2. Fixed Dynamic Price Calculator
-      const checkboxes = document.querySelectorAll('.test-checkbox');
+      // 2. Dynamic Price Calculator
       const totalDisplay = document.getElementById('totalAmountDisplay');
 
       function calculateTotal() {
         let currentTotal = 0;
+        const checkboxes = document.querySelectorAll('.test-checkbox');
         checkboxes.forEach(cb => {
           if (cb.checked) {
             currentTotal += parseInt(cb.getAttribute('data-price') || '0', 10);
@@ -177,12 +177,22 @@
         totalDisplay.innerText = `₹${currentTotal}`;
       }
 
-      checkboxes.forEach(cb => {
+      const testCheckboxes = document.querySelectorAll('.test-checkbox');
+      testCheckboxes.forEach(cb => {
         cb.addEventListener('change', calculateTotal);
-        cb.addEventListener('click', calculateTotal);
+        cb.addEventListener('input', calculateTotal);
+        
+        const parentLabel = cb.closest('label');
+        if (parentLabel) {
+          parentLabel.addEventListener('click', () => {
+            setTimeout(calculateTotal, 50);
+          });
+        }
       });
 
-      // 3. Geolocation Handler (Default Pune Bounds)
+      calculateTotal();
+
+      // 3. Geolocation Handler
       let userLat = 18.5204;
       let userLng = 73.8567;
 
@@ -203,7 +213,7 @@
         }
       });
 
-      // 4. Submit Handler linked directly to Cloud Run API
+      // 4. Submit Handler linked to Cloud Run API
       const bookingForm = document.getElementById('bookingForm');
       const submitBtn = document.getElementById('submitBtn');
       const errorMsg = document.getElementById('errorMsg');
@@ -212,7 +222,7 @@
         e.preventDefault();
         errorMsg.classList.add('hidden');
 
-        const selectedTestIds = Array.from(checkboxes)
+        const selectedTestIds = Array.from(document.querySelectorAll('.test-checkbox'))
           .filter(c => c.checked)
           .map(c => c.value);
 
@@ -242,7 +252,6 @@
         submitBtn.disabled = true;
 
         try {
-          // LIVE GOOGLE CLOUD RUN API ENDPOINT
           const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/api/book-pvd-sample', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
