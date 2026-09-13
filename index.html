@@ -3,245 +3,230 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PVD India - Diagnostic Sample Collection</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>PVD India Diagnostics - Sample Booking</title>
+  <style>
+    :root { --primary: #059669; --bg: #f3f4f6; --card: #ffffff; --text: #1f2937; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 12px; }
+    .container { max-width: 480px; margin: 0 auto; background: var(--card); border-radius: 12px; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .header { background: #047857; color: white; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .header h2 { margin: 0; font-size: 18px; }
+    .badge { background: rgba(255,255,255,0.2); font-size: 11px; padding: 4px 8px; border-radius: 12px; }
+    .section-title { font-weight: 600; font-size: 14px; margin-top: 16px; margin-bottom: 8px; color: #374151; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    label { font-size: 12px; color: #4b5563; font-weight: 500; display: block; margin-bottom: 4px; }
+    select, input, textarea { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; box-sizing: border-box; font-size: 14px; margin-bottom: 8px; }
+    .test-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; background: #fafafa; }
+    .test-card label { margin: 0; font-size: 13px; color: #111827; cursor: pointer; display: flex; align-items: center; gap: 8px; flex: 1; }
+    .test-card input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; }
+    .price { font-weight: 700; color: #059669; font-size: 13px; }
+    .total-box { background: #ecfdf5; border: 1px solid #a7f3d0; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin: 16px 0; }
+    .total-box span { font-weight: 700; font-size: 18px; color: #047857; }
+    .btn-gps { background: #1f2937; color: white; border: none; padding: 10px; border-radius: 6px; width: 100%; font-weight: 600; cursor: pointer; font-size: 13px; margin-bottom: 12px; }
+    .btn-submit { background: #059669; color: white; border: none; padding: 14px; border-radius: 8px; width: 100%; font-weight: 700; font-size: 15px; cursor: pointer; }
+    .consent-box { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 12px; }
+    .consent-box input { width: 16px; height: 16px; margin-top: 2px; }
+    .consent-box label { font-size: 11px; color: #6b7280; }
+  </style>
 </head>
-<body class="bg-gray-100 font-sans antialiased text-gray-900">
-
-  <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg flex flex-col">
-    <!-- Header -->
-    <div class="bg-emerald-700 text-white p-4 sticky top-0 z-10 flex justify-between items-center">
+<body>
+  <div class="container">
+    <div class="header">
       <div>
-        <h1 class="font-bold text-lg">PVD India Diagnostics</h1>
-        <p class="text-xs text-emerald-100">Doorstep Sample Collection</p>
+        <h2>PVD India Diagnostics</h2>
+        <small style="font-size: 11px; opacity: 0.9;">Doorstep Sample Collection</small>
       </div>
-      <span class="bg-emerald-800 text-xs px-2.5 py-1 rounded-full border border-emerald-600">WhatsApp Webview</span>
+      <span class="badge">WhatsApp Webview</span>
     </div>
 
-    <!-- Form Body -->
-    <form id="bookingForm" class="p-4 space-y-5 flex-1">
+    <form id="booking-form">
+      <div class="section-title">1. Customer & Livestock Details</div>
+      <div>
+        <label>Customer Name *</label>
+        <input type="text" id="customer_name" placeholder="Enter Full Name" required>
+      </div>
+      <div class="grid">
+        <div>
+          <label>Role *</label>
+          <select id="user_role">
+            <option value="Farmer">Farmer</option>
+            <option value="Veterinarian">Veterinarian</option>
+            <option value="Dairy Manager">Dairy Manager</option>
+          </select>
+        </div>
+        <div>
+          <label>Animal Type *</label>
+          <select id="animal_type">
+            <option value="Cattle (Cow/Buffalo)">Cattle (Cow/Buffalo)</option>
+            <option value="Goat/Sheep">Goat/Sheep</option>
+            <option value="Poultry">Poultry</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label>Cow / Animal Tag ID (Optional)</label>
+        <input type="text" id="cow_id" placeholder="e.g. COW-PVD-88912">
+      </div>
+
+      <div class="section-title">2. Select Diagnostic Tests</div>
       
-      <!-- Context Details -->
-      <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-200 text-xs space-y-1">
-        <div class="flex justify-between">
-          <span class="text-gray-600">Pincode:</span>
-          <span id="displayPincode" class="font-semibold text-emerald-800">Reading...</span>
-        </div>
-        <div class="flex justify-between">
-          <span class="text-gray-600">Phone Number:</span>
-          <span id="displayPhone" class="font-semibold text-emerald-800">Reading...</span>
-        </div>
+      <div class="test-card">
+        <label><input type="checkbox" class="test-cb" value="TEST-MAST-01" data-price="450"> Udder Milk Culture & Sensitivity</label>
+        <span class="price">₹450</span>
+      </div>
+      <div class="test-card">
+        <label><input type="checkbox" class="test-cb" value="TEST-FERT-02" data-price="850"> Bovine Fertility & Hormonal Panel</label>
+        <span class="price">₹850</span>
+      </div>
+      <div class="test-card">
+        <label><input type="checkbox" class="test-cb" value="TEST-BLOD-03" data-price="650"> Complete Blood & Metabolic Profile</label>
+        <span class="price">₹650</span>
+      </div>
+      <div class="test-card">
+        <label><input type="checkbox" class="test-cb" value="TEST-PCR-04" data-price="1200"> RT-PCR Screening for Viral Pathogens</label>
+        <span class="price">₹1200</span>
+      </div>
+      <div class="test-card">
+        <label><input type="checkbox" class="test-cb" value="TEST-PARA-05" data-price="300"> Fecal Parasitic & Dung Analysis</label>
+        <span class="price">₹300</span>
       </div>
 
-      <!-- Step 1: Customer Profile -->
-      <div class="space-y-3">
-        <h2 class="font-semibold text-sm text-emerald-900 border-b pb-1">1. Contact & Animal Profile</h2>
-        
+      <div class="total-box">
+        <strong>Total Package Amount:</strong>
+        <span id="total-amount-display">₹0</span>
+      </div>
+
+      <div class="section-title">3. Schedule & Doorstep Location</div>
+      <div>
+        <label>Pickup Address *</label>
+        <textarea id="address" rows="2" placeholder="Village / House No / Farm landmark" required></textarea>
+      </div>
+      <div class="grid">
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">Full Name *</label>
-          <input type="text" id="customer_name" required class="w-full p-2.5 text-sm border rounded-lg focus:ring-emerald-500 focus:border-emerald-500" placeholder="Enter your full name">
+          <label>Visit Date *</label>
+          <input type="date" id="visit_date" required>
         </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">Role *</label>
-            <select id="user_role" required class="w-full p-2.5 text-sm border rounded-lg focus:ring-emerald-500">
-              <option value="Farmer">Farmer</option>
-              <option value="Veterinarian">Veterinarian</option>
-              <option value="Clinic">Clinic / Dairy</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">Animal Type *</label>
-            <select id="animal_type" required class="w-full p-2.5 text-sm border rounded-lg focus:ring-emerald-500">
-              <option value="Cattle">Cattle (Cow/Buffalo)</option>
-              <option value="Pet">Pet (Dog/Cat)</option>
-              <option value="SmallRuminant">Goat / Sheep</option>
-            </select>
-          </div>
-        </div>
-
         <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">Cow / Animal Tag ID (Optional)</label>
-          <input type="text" id="cow_id" class="w-full p-2.5 text-sm border rounded-lg" placeholder="e.g. COW-PVD-88912">
+          <label>Time Slot *</label>
+          <select id="visit_slot">
+            <option value="09:00 AM - 12:00 PM">Morning (9am - 12pm)</option>
+            <option value="02:00 PM - 05:00 PM">Afternoon (2pm - 5pm)</option>
+          </select>
         </div>
       </div>
 
-      <!-- Step 2: Diagnostic Catalog -->
-      <div class="space-y-3">
-        <h2 class="font-semibold text-sm text-emerald-900 border-b pb-1">2. Select Diagnostic Tests</h2>
-        
-        <div class="space-y-2 text-xs">
-          <label class="flex items-center justify-between p-3 border rounded-lg hover:bg-emerald-50 cursor-pointer">
-            <div class="flex items-center">
-              <input type="checkbox" name="test" value="TEST-MAST-01" data-price="450" class="test-checkbox text-emerald-600 rounded w-4 h-4">
-              <span class="ml-2 font-medium">Udder Milk Culture & Sensitivity</span>
-            </div>
-            <span class="font-bold text-emerald-700">₹450</span>
-          </label>
+      <button type="button" class="btn-gps" id="gps-btn">📍 Capture Live GPS Location</button>
+      <div id="gps-status" style="font-size: 11px; color: #059669; margin-bottom: 8px; display: none;">✓ Location Captured</div>
 
-          <label class="flex items-center justify-between p-3 border rounded-lg hover:bg-emerald-50 cursor-pointer">
-            <div class="flex items-center">
-              <input type="checkbox" name="test" value="TEST-FERT-02" data-price="850" class="test-checkbox text-emerald-600 rounded w-4 h-4">
-              <span class="ml-2 font-medium">Bovine Fertility & Hormonal Panel</span>
-            </div>
-            <span class="font-bold text-emerald-700">₹850</span>
-          </label>
-
-          <label class="flex items-center justify-between p-3 border rounded-lg hover:bg-emerald-50 cursor-pointer">
-            <div class="flex items-center">
-              <input type="checkbox" name="test" value="TEST-BLOD-03" data-price="650" class="test-checkbox text-emerald-600 rounded w-4 h-4">
-              <span class="ml-2 font-medium">Complete Blood & Metabolic Profile</span>
-            </div>
-            <span class="font-bold text-emerald-700">₹650</span>
-          </label>
-        </div>
-
-        <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg border font-bold text-sm">
-          <span>Total Package Amount:</span>
-          <span id="totalAmountDisplay" class="text-emerald-700 text-base font-extrabold">₹0</span>
-        </div>
-      </div>
-
-      <!-- Step 3: Schedule & Location -->
-      <div class="space-y-3">
-        <h2 class="font-semibold text-sm text-emerald-900 border-b pb-1">3. Schedule & Doorstep Location</h2>
-
-        <div>
-          <label class="block text-xs font-medium text-gray-700 mb-1">Pickup Address *</label>
-          <textarea id="address" rows="2" required class="w-full p-2.5 text-sm border rounded-lg" placeholder="Village / House No / Farm landmark"></textarea>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">Visit Date *</label>
-            <input type="date" id="visit_date" required class="w-full p-2 text-sm border rounded-lg">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700 mb-1">Time Slot *</label>
-            <select id="visit_slot" required class="w-full p-2 text-sm border rounded-lg">
-              <option value="09:00 AM - 12:00 PM">Morning (9am - 12pm)</option>
-              <option value="02:00 PM - 05:00 PM">Afternoon (2pm - 5pm)</option>
-            </select>
-          </div>
-        </div>
-
-        <button type="button" id="geoBtn" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 text-white text-xs font-medium rounded-lg flex items-center justify-center space-x-2">
-          <span>📍 Capture Live GPS Location</span>
-        </button>
-        <p id="geoStatus" class="text-xs text-center text-gray-500">Location required for phlebotomist dispatch.</p>
-      </div>
-
-      <!-- Consent -->
-      <div class="flex items-start space-x-2 text-xs text-gray-600">
-        <input type="checkbox" id="consent_given" required class="mt-0.5 rounded text-emerald-600">
+      <div class="consent-box">
+        <input type="checkbox" id="consent_given" required>
         <label for="consent_given">I confirm sample details and consent to PVD diagnostic lab terms.</label>
       </div>
 
-      <!-- Error Message Banner -->
-      <div id="errorMsg" class="hidden p-3 bg-red-50 text-red-700 border border-red-200 text-xs rounded-lg"></div>
-
-      <!-- Submit Button -->
-      <button type="submit" id="submitBtn" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-lg shadow-md transition">
-        Confirm & Book Sample Pickup
-      </button>
+      <button type="submit" class="btn-submit">Confirm & Book Sample Pickup</button>
     </form>
   </div>
 
-<script>
-  // Catalog price map
-  const TEST_PRICES = {
-    'TEST-MAST-01': 450,
-    'TEST-FERT-02': 850,
-    'TEST-BLOD-03': 650,
-    'TEST-PCR-04': 1200,
-    'TEST-PARA-05': 300
-  };
+  <script>
+    let userLat = 18.5204;
+    let userLng = 73.8567;
 
-  // Function to calculate and update total amount live
-  function updateTotalAmount() {
-    let total = 0;
-    const checkboxes = document.querySelectorAll('.test-checkbox:checked');
-    checkboxes.forEach(cb => {
-      const price = TEST_PRICES[cb.value] || 0;
-      total += price;
-    });
-    document.getElementById('total-amount').innerText = `₹${total}`;
-  }
-
-  // Attach event listeners to all test checkboxes
-  document.querySelectorAll('.test-checkbox').forEach(cb => {
-    cb.addEventListener('change', updateTotalAmount);
-  });
-
-  // Extract URL Parameters
-  const urlParams = new URLSearchParams(window.location.search);
-  const pincode = urlParams.get('pincode') || '412307';
-  const phoneRaw = urlParams.get('phone') || '9373194945';
-  const phone = phoneRaw.replace(/\D/g, '').slice(-10);
-  const bsuid = urlParams.get('bsuid') || `91${phone}`;
-
-  // Pre-select test if passed in URL (e.g., ?test=TEST-FERT-02)
-  const preselectedTest = urlParams.get('test');
-  if (preselectedTest) {
-    const targetCheckbox = document.querySelector(`.test-checkbox[value="${preselectedTest}"]`);
-    if (targetCheckbox) {
-      targetCheckbox.checked = true;
-    }
-  }
-
-  // Initial calculation on page load
-  updateTotalAmount();
-
-  // Form Submission Handler
-  document.getElementById('booking-form').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const selectedCheckboxes = document.querySelectorAll('.test-checkbox:checked');
-    if (selectedCheckboxes.length === 0) {
-      alert('Please select at least one diagnostic test.');
-      return;
-    }
-
-    const selectedTestIds = Array.from(selectedCheckboxes).map(cb => cb.value);
-
-    const payload = {
-      customer_name: document.getElementById('customer_name').value.trim(),
-      phone_number: phone,
-      bsuid: bsuid,
-      user_role: document.getElementById('user_role').value,
-      pincode: pincode,
-      address: document.getElementById('address').value.trim(),
-      animal_type: document.getElementById('animal_type').value,
-      cow_id: document.getElementById('cow_id').value.trim(),
-      selected_test_ids: selectedTestIds,
-      visit_date: document.getElementById('visit_date').value,
-      visit_slot: document.getElementById('visit_slot').value,
-      latitude: window.userLat || 18.5204,
-      longitude: window.userLng || 73.8567,
-      consent_given: document.getElementById('consent_given').checked
-    };
-
-    try {
-      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/api/book-pvd-sample', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+    // Recalculate Total
+    function recalculateTotal() {
+      let total = 0;
+      document.querySelectorAll('.test-cb:checked').forEach(cb => {
+        total += parseInt(cb.getAttribute('data-price') || 0, 10);
       });
-
-      const result = await response.json();
-      if (result.success) {
-        alert(`Booking Confirmed! Order Ref: ${result.booking.booking_reference}`);
-        if (window.TelegramWebviewProxy || window.isWhatsAppWebview) {
-          window.close();
-        }
-      } else {
-        alert(`Booking Error: ${result.error}`);
-      }
-    } catch (err) {
-      alert('Network error submitting booking. Please try again.');
+      document.getElementById('total-amount-display').innerText = `₹${total}`;
     }
-  });
-</script>
+
+    // Attach click listeners to checkboxes
+    document.querySelectorAll('.test-cb').forEach(cb => {
+      cb.addEventListener('change', recalculateTotal);
+    });
+
+    // Parse URL Parameters
+    const params = new URLSearchParams(window.location.search);
+    const pincode = params.get('pincode') || '412307';
+    const phoneRaw = params.get('phone') || '9373194945';
+    const phone = phoneRaw.replace(/\D/g, '').slice(-10);
+    const bsuid = params.get('bsuid') || `91${phone}`;
+
+    // Auto-select test if passed in URL (e.g., ?test=TEST-FERT-02)
+    const testParam = params.get('test');
+    if (testParam) {
+      const targetCb = document.querySelector(`.test-cb[value="${testParam}"]`);
+      if (targetCb) {
+        targetCb.checked = true;
+      }
+    }
+
+    // Set default visit date to tomorrow
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    document.getElementById('visit_date').value = tomorrow.toISOString().split('T')[0];
+
+    // Initial total calculation on load
+    recalculateTotal();
+
+    // GPS Location Listener
+    document.getElementById('gps-btn').addEventListener('click', () => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            userLat = pos.coords.latitude;
+            userLng = pos.coords.longitude;
+            document.getElementById('gps-status').style.display = 'block';
+          },
+          () => alert('Could not get live location. Defaulting to registered area.')
+        );
+      }
+    });
+
+    // Form Submit Handler
+    document.getElementById('booking-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const selectedCbs = document.querySelectorAll('.test-cb:checked');
+      if (selectedCbs.length === 0) {
+        alert('Please select at least one diagnostic test.');
+        return;
+      }
+
+      const selectedTestIds = Array.from(selectedCbs).map(cb => cb.value);
+
+      const payload = {
+        customer_name: document.getElementById('customer_name').value.trim(),
+        phone_number: phone,
+        bsuid: bsuid,
+        user_role: document.getElementById('user_role').value,
+        pincode: pincode,
+        address: document.getElementById('address').value.trim(),
+        animal_type: document.getElementById('animal_type').value,
+        cow_id: document.getElementById('cow_id').value.trim(),
+        selected_test_ids: selectedTestIds,
+        visit_date: document.getElementById('visit_date').value,
+        visit_slot: document.getElementById('visit_slot').value,
+        latitude: userLat,
+        longitude: userLng,
+        consent_given: document.getElementById('consent_given').checked
+      };
+
+      try {
+        const res = await fetch('https://pvd-api-142133401500.asia-south1.run.app/api/book-pvd-sample', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert(`🎉 Booking Confirmed!\nOrder Reference: ${data.booking.booking_reference}\nTotal Amount: ₹${data.booking.total_amount_inr}`);
+        } else {
+          alert(`Booking Error: ${data.error}`);
+        }
+      } catch (err) {
+        alert('Error connecting to PVD servers. Please try again.');
+      }
+    });
+  </script>
 </body>
 </html>
