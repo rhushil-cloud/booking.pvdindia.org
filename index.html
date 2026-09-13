@@ -38,7 +38,7 @@
       <span class="badge">WhatsApp Webview</span>
     </div>
 
-    <form id="booking-form">
+    <form id="pvdForm">
       <div class="section-title">1. Customer & Livestock Details</div>
       <div>
         <label>Customer Name *</label>
@@ -92,7 +92,7 @@
 
       <div class="total-box">
         <strong>Total Package Amount:</strong>
-        <span id="total-amount-display">₹0</span>
+        <span id="totalDisplay">₹0</span>
       </div>
 
       <div class="section-title">3. Schedule & Doorstep Location</div>
@@ -118,8 +118,8 @@
       <div id="gps-status" style="font-size: 11px; color: #059669; margin-bottom: 8px; display: none;">✓ Location Captured</div>
 
       <div class="consent-box">
-        <input type="checkbox" id="consent_given" required>
-        <label for="consent_given">I confirm sample details and consent to PVD diagnostic lab terms.</label>
+        <input type="checkbox" id="consent" required>
+        <label for="consent">I confirm sample details and consent to PVD diagnostic lab terms.</label>
       </div>
 
       <button type="submit" class="btn-submit">Confirm & Book Sample Pickup</button>
@@ -130,28 +130,28 @@
     let userLat = 18.5204;
     let userLng = 73.8567;
 
-    // Recalculate Total
-    function recalculateTotal() {
+    // Recalculate total amount live when checkboxes change
+    function calcTotal() {
       let total = 0;
       document.querySelectorAll('.test-cb:checked').forEach(cb => {
         total += parseInt(cb.getAttribute('data-price') || 0, 10);
       });
-      document.getElementById('total-amount-display').innerText = `₹${total}`;
+      document.getElementById('totalDisplay').innerText = `₹${total}`;
     }
 
-    // Attach click listeners to checkboxes
+    // Attach change listeners to test checkboxes
     document.querySelectorAll('.test-cb').forEach(cb => {
-      cb.addEventListener('change', recalculateTotal);
+      cb.addEventListener('change', calcTotal);
     });
 
-    // Parse URL Parameters
+    // Parse URL Parameters (extract pincode, phone, and WhatsApp BSUID)
     const params = new URLSearchParams(window.location.search);
     const pincode = params.get('pincode') || '412307';
     const phoneRaw = params.get('phone') || '9373194945';
     const phone = phoneRaw.replace(/\D/g, '').slice(-10);
-    const bsuid = params.get('bsuid') || `91${phone}`;
+    const bsuid = params.get('bsuid') || params.get('phone') || `91${phone}`;
 
-    // Auto-select test if passed in URL (e.g., ?test=TEST-FERT-02)
+    // Auto-select test parameter if passed in URL
     const testParam = params.get('test');
     if (testParam) {
       const targetCb = document.querySelector(`.test-cb[value="${testParam}"]`);
@@ -165,8 +165,8 @@
     tomorrow.setDate(tomorrow.getDate() + 1);
     document.getElementById('visit_date').value = tomorrow.toISOString().split('T')[0];
 
-    // Initial total calculation on load
-    recalculateTotal();
+    // Initial total call on page load
+    calcTotal();
 
     // GPS Location Listener
     document.getElementById('gps-btn').addEventListener('click', () => {
@@ -182,8 +182,8 @@
       }
     });
 
-    // Form Submit Handler
-    document.getElementById('booking-form').addEventListener('submit', async (e) => {
+    // Form Submission Handler
+    document.getElementById('pvdForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const selectedCbs = document.querySelectorAll('.test-cb:checked');
@@ -208,7 +208,7 @@
         visit_slot: document.getElementById('visit_slot').value,
         latitude: userLat,
         longitude: userLng,
-        consent_given: document.getElementById('consent_given').checked
+        consent_given: document.getElementById('consent').checked
       };
 
       try {
@@ -219,7 +219,7 @@
         });
         const data = await res.json();
         if (data.success) {
-          alert(`🎉 Booking Confirmed!\nOrder Reference: ${data.booking.booking_reference}\nTotal Amount: ₹${data.booking.total_amount_inr}`);
+          alert(`🎉 Booking Confirmed!\nReference: ${data.booking.booking_reference}\nTotal Amount: ₹${data.booking.total_amount_inr}`);
         } else {
           alert(`Booking Error: ${data.error}`);
         }
