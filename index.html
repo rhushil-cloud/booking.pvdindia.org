@@ -107,10 +107,12 @@
         </div>
         <div>
           <label>Time Slot *</label>
-          <select id="visit_slot">
-            <option value="09:00 AM - 12:00 PM">Morning (9am - 12pm)</option>
-            <option value="02:00 PM - 05:00 PM">Afternoon (2pm - 5pm)</option>
-          </select>
+          <select id="visit_slot" name="visit_slot" required>
+  <option value="" disabled selected>Select Time Slot</option>
+  <option value="Morning (9am - 12pm)">Morning (9am - 12pm)</option>
+  <option value="Afternoon (12pm - 4pm)">Afternoon (12pm - 4pm)</option>
+  <option value="Evening (4pm - 7pm)">Evening (4pm - 7pm)</option>
+</select>
         </div>
       </div>
 
