@@ -183,50 +183,42 @@
     });
 
     // Form Submission Handler
-    document.getElementById('pvdForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+   const API_URL = 'https://pvd-api-142133401500.asia-south1.run.app/api/book-pvd-sample';
 
-      const selectedCbs = document.querySelectorAll('.test-cb:checked');
-      if (selectedCbs.length === 0) {
-        alert('Please select at least one diagnostic test.');
-        return;
-      }
+document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
 
-      const selectedTestIds = Array.from(selectedCbs).map(cb => cb.value);
+  const bookingData = {
+    customer_name: document.getElementById('customer_name').value,
+    phone_number: document.getElementById('phone_number').value,
+    user_role: document.getElementById('user_role').value,
+    animal_type: document.getElementById('animal_type').value,
+    cow_id: document.getElementById('cow_id').value,
+    selected_test_ids: Array.from(document.querySelectorAll('input[name="tests"]:checked')).map(cb => cb.value),
+    address: document.getElementById('address').value,
+    pincode: '412307',
+    visit_date: document.getElementById('visit_date').value,
+    visit_slot: document.getElementById('visit_slot').value,
+    bsuid: new URLSearchParams(window.location.search).get('bsuid') || document.getElementById('phone_number').value
+  };
 
-      const payload = {
-        customer_name: document.getElementById('customer_name').value.trim(),
-        phone_number: phone,
-        bsuid: bsuid,
-        user_role: document.getElementById('user_role').value,
-        pincode: pincode,
-        address: document.getElementById('address').value.trim(),
-        animal_type: document.getElementById('animal_type').value,
-        cow_id: document.getElementById('cow_id').value.trim(),
-        selected_test_ids: selectedTestIds,
-        visit_date: document.getElementById('visit_date').value,
-        visit_slot: document.getElementById('visit_slot').value,
-        latitude: userLat,
-        longitude: userLng,
-        consent_given: document.getElementById('consent').checked
-      };
-
-      try {
-        const res = await fetch('https://pvd-api-142133401500.asia-south1.run.app/api/book-pvd-sample', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        if (data.success) {
-          alert(`🎉 Booking Confirmed!\nReference: ${data.booking.booking_reference}\nTotal Amount: ₹${data.booking.total_amount_inr}`);
-        } else {
-          alert(`Booking Error: ${data.error}`);
-        }
-      } catch (err) {
-        alert('Error connecting to PVD servers. Please try again.');
-      }
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData)
     });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("🎉 Booking Confirmed! Order Ref: " + data.booking.booking_reference);
+    } else {
+      alert("Booking Error: " + data.error);
+    }
+  } catch (err) {
+    alert("Error connecting to PVD servers. Please try again.");
+  }
+});
   </script>
 </body>
 </html>
