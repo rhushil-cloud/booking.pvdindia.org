@@ -7,7 +7,9 @@
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
     .card { max-width: 480px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-    .header { background: #056543; color: white; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+    .header { background: #056543; color: white; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative; }
+    .lang-switcher { position: absolute; top: 12px; right: 12px; }
+    .lang-switcher select { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
     label { font-weight: bold; font-size: 14px; color: #333; display: block; margin-top: 15px; margin-bottom: 5px; }
     input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
     .btn { width: 100%; padding: 14px; background: #056543; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 20px; cursor: pointer; }
@@ -15,67 +17,86 @@
     .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
     .checkbox-item { display: flex; align-items: center; gap: 10px; font-weight: normal; font-size: 14px; }
     .checkbox-item input { width: auto; }
+    .hidden-field { display: none; margin-top: 8px; }
   </style>
 </head>
 <body>
 
 <div class="card">
   <div class="header">
-    <h2 style="margin:0; font-size: 20px;">PVD India Diagnostics</h2>
-    <p style="margin:5px 0 0 0; font-size: 12px; opacity:0.9;">Doorstep Sample Collection Request</p>
+    <div class="lang-switcher">
+      <select id="languageSelect" onchange="switchLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="mr">मराठी</option>
+        <option value="hi">हिंदी</option>
+      </select>
+    </div>
+    <h2 id="titleText" style="margin:0; font-size: 18px;">PVD India Diagnostics</h2>
+    <p id="subtitleText" style="margin:5px 0 0 0; font-size: 12px; opacity:0.9;">Doorstep Sample Collection Request</p>
   </div>
 
   <form id="pvdBookingForm">
-    <label>1. Customer Name *</label>
+    <label id="lblCustomerName">1. Customer Name *</label>
     <input type="text" id="customer_name" placeholder="Enter Full Name" required>
 
     <div style="display:flex; gap:10px;">
       <div style="flex:1;">
-        <label>Role *</label>
-        <select id="user_role" required>
-          <option value="Farmer">Farmer</option>
-          <option value="Veterinarian">Veterinarian</option>
-          <option value="Pet Owner">Pet Owner</option>
-          <option value="Dairy Manager">Dairy Manager</option>
+        <label id="lblRole">Role *</label>
+        <select id="user_role" onchange="toggleOtherInput('user_role', 'role_other_container')" required>
+          <option value="Farmer" id="optFarmer">Farmer</option>
+          <option value="Veterinarian" id="optVet">Veterinarian</option>
+          <option value="Pet Owner" id="optPetOwner">Pet Owner</option>
+          <option value="Other" id="optRoleOther">Other</option>
         </select>
+        <div id="role_other_container" class="hidden-field">
+          <input type="text" id="role_other_text" placeholder="Specify Your Role">
+        </div>
       </div>
+
       <div style="flex:1;">
-        <label>Animal Type *</label>
-        <select id="animal_type" required>
-          <option value="Cattle (Cow/Buffalo)">Cattle (Cow/Buffalo)</option>
-          <option value="Pet (Dog/Cat)">Pet (Dog/Cat)</option>
-          <option value="Goat/Sheep">Goat/Sheep</option>
-          <option value="Poultry">Poultry</option>
+        <label id="lblAnimalType">Animal Type *</label>
+        <select id="animal_type" onchange="toggleOtherInput('animal_type', 'animal_other_container')" required>
+          <option value="Cattle (Cow/Buffalo)" id="optCattle">Cattle (Cow/Buffalo)</option>
+          <option value="Pet (Dog/Cat)" id="optPet">Pet (Dog/Cat)</option>
+          <option value="Goat/Sheep" id="optGoat">Goat/Sheep</option>
+          <option value="Other" id="optAnimalOther">Other</option>
         </select>
+        <div id="animal_other_container" class="hidden-field">
+          <input type="text" id="animal_other_text" placeholder="Specify Animal Name">
+        </div>
       </div>
     </div>
 
-    <label>Tag / Microchip / Pet Name (Optional)</label>
+    <label id="lblTag">Tag / Microchip / Pet Name (Optional)</label>
     <input type="text" id="cow_id" placeholder="e.g. Bruno / Tag #48291">
 
-    <label>2. Required Sample / Test Types *</label>
+    <label id="lblTests">2. Required Sample / Test Types *</label>
     <div class="checkbox-group">
-      <label class="checkbox-item"><input type="checkbox" value="Milk Culture & Mastitis"> Udder Milk Culture & Sensitivity</label>
-      <label class="checkbox-item"><input type="checkbox" value="Blood & Metabolic Profile"> Complete Blood & Metabolic Profile</label>
-      <label class="checkbox-item"><input type="checkbox" value="Fertility & Hormonal Check"> Bovine Fertility & Hormonal Panel</label>
-      <label class="checkbox-item"><input type="checkbox" value="Dung & Parasitic Analysis"> Fecal Parasitic & Dung Analysis</label>
-      <label class="checkbox-item"><input type="checkbox" value="Viral PCR / General Diagnostic"> RT-PCR Screening for Viral Pathogens</label>
+      <label class="checkbox-item"><input type="checkbox" value="Udder Milk Culture & Sensitivity"> <span id="t1">Udder Milk Culture & Sensitivity</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="Complete Blood & Metabolic Profile"> <span id="t2">Complete Blood & Metabolic Profile</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="Bovine Fertility & Hormonal Panel"> <span id="t3">Bovine Fertility & Hormonal Panel</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="Fecal Parasitic & Dung Analysis"> <span id="t4">Fecal Parasitic & Dung Analysis</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="RT-PCR Screening for Viral Pathogens"> <span id="t5">RT-PCR Screening for Viral Pathogens</span></label>
+      <label class="checkbox-item"><input type="checkbox" id="chkOtherTest" value="Other" onchange="toggleTestOtherInput()"> <span id="tOther">Other / Custom Test</span></label>
+    </div>
+    <div id="test_other_container" class="hidden-field">
+      <input type="text" id="test_other_text" placeholder="Specify required test name or symptoms">
     </div>
 
-    <label>3. Schedule Pickup Location *</label>
+    <label id="lblAddress">3. Schedule Pickup Location *</label>
     <textarea id="address" rows="3" placeholder="Village / Landmark / House No" required></textarea>
 
     <div style="display:flex; gap:10px;">
       <div style="flex:1;">
-        <label>Preferred Date *</label>
+        <label id="lblDate">Preferred Date *</label>
         <input type="date" id="visit_date" required>
       </div>
       <div style="flex:1;">
-        <label>Time Slot *</label>
+        <label id="lblSlot">Time Slot *</label>
         <select id="visit_slot" required>
-          <option value="Morning (9am - 12pm)">Morning (9am - 12pm)</option>
-          <option value="Afternoon (12pm - 4pm)">Afternoon (12pm - 4pm)</option>
-          <option value="Evening (4pm - 7pm)">Evening (4pm - 7pm)</option>
+          <option value="Morning (9am - 12pm)" id="slot1">Morning (9am - 12pm)</option>
+          <option value="Afternoon (12pm - 4pm)" id="slot2">Afternoon (12pm - 4pm)</option>
+          <option value="Evening (4pm - 7pm)" id="slot3">Evening (4pm - 7pm)</option>
         </select>
       </div>
     </div>
@@ -85,14 +106,148 @@
 </div>
 
 <script>
-  // Set default date to today
   document.getElementById('visit_date').valueAsDate = new Date();
+
+  function toggleOtherInput(selectId, containerId) {
+    const val = document.getElementById(selectId).value;
+    const container = document.getElementById(containerId);
+    container.style.display = (val === 'Other') ? 'block' : 'none';
+  }
+
+  function toggleTestOtherInput() {
+    const chk = document.getElementById('chkOtherTest');
+    const container = document.getElementById('test_other_container');
+    container.style.display = chk.checked ? 'block' : 'none';
+  }
+
+  // TRANSLATION DICTIONARY
+  const translations = {
+    en: {
+      title: "PVD India Diagnostics",
+      subtitle: "Doorstep Sample Collection Request",
+      name: "1. Customer Name *",
+      role: "Role *",
+      animal: "Animal Type *",
+      tag: "Tag / Microchip / Pet Name (Optional)",
+      tests: "2. Required Sample / Test Types *",
+      address: "3. Schedule Pickup Location *",
+      date: "Preferred Date *",
+      slot: "Time Slot *",
+      btn: "Request Sample Visit",
+      farmer: "Farmer",
+      vet: "Veterinarian",
+      petOwner: "Pet Owner",
+      other: "Other",
+      cattle: "Cattle (Cow/Buffalo)",
+      pet: "Pet (Dog/Cat)",
+      goat: "Goat/Sheep",
+      t1: "Udder Milk Culture & Sensitivity",
+      t2: "Complete Blood & Metabolic Profile",
+      t3: "Bovine Fertility & Hormonal Panel",
+      t4: "Fecal Parasitic & Dung Analysis",
+      t5: "RT-PCR Screening for Viral Pathogens",
+      tOther: "Other / Custom Test"
+    },
+    mr: {
+      title: "PVD इंडिया डायग्नोस्टिक्स",
+      subtitle: "घरोघरी सॅम्पल कलेक्शन विनंती",
+      name: "१. ग्राहकाचे नाव *",
+      role: "भूमिका (Role) *",
+      animal: "जनावर / पाळीव प्राणी *",
+      tag: "टॅग / मायक्रोचिप / प्राण्याचे नाव (ऐच्छिक)",
+      tests: "२. आवश्यक तपासणी प्रकार *",
+      address: "३. सॅम्पल पिकअप पत्ता *",
+      date: "पसंतीची तारीख *",
+      slot: "वेळ *",
+      btn: "सॅम्पल तपासणी बुक करा",
+      farmer: "शेतकरी (Farmer)",
+      vet: "पशू डॉक्टर (Veterinarian)",
+      petOwner: "पेट ओनर (Pet Owner)",
+      other: "इतर (Other)",
+      cattle: "गाय / म्हैस (Cattle)",
+      pet: "कुत्रा / मांजर (Pet)",
+      goat: "शेळी / मेंढी (Goat/Sheep)",
+      t1: "दूध तपासणी (Milk Culture)",
+      t2: "रक्त तपासणी (Blood Profile)",
+      t3: "प्रजनन व संप्रेरक तपासणी (Fertility)",
+      t4: "शेण व परजीवी तपासणी (Fecal Analysis)",
+      t5: "व्हायरल तपासणी (RT-PCR Screening)",
+      tOther: "इतर / नवीन चाचणी (Other Test)"
+    },
+    hi: {
+      title: "PVD इंडिया डायग्नोस्टिक्स",
+      subtitle: "घर पर सैंपल कलेक्शन का अनुरोध",
+      name: "१. ग्राहक का नाम *",
+      role: "भूमिका (Role) *",
+      animal: "पशु / पालतू जानवर *",
+      tag: "टैग / माइक्रोचिप / नाम (वैकल्पिक)",
+      tests: "२. आवश्यक टेस्ट के प्रकार *",
+      address: "३. सैंपल पिकअप का पता *",
+      date: "पसंदीदा तारीख *",
+      slot: "समय *",
+      btn: "सैंपल बुकिंग का अनुरोध करें",
+      farmer: "किसान (Farmer)",
+      vet: "पशु चिकित्सक (Veterinarian)",
+      petOwner: "पेट ऑनर (Pet Owner)",
+      other: "अन्य (Other)",
+      cattle: "गाय / भैंस (Cattle)",
+      pet: "कुत्ता / बिल्ली (Pet)",
+      goat: "बकरी / भेड़ (Goat/Sheep)",
+      t1: "दूध जांच (Milk Culture)",
+      t2: "खून की जांच (Blood Profile)",
+      t3: "प्रजनन जांच (Fertility Panel)",
+      t4: "गोबर एवं परजीवी जांच (Fecal Analysis)",
+      t5: "वायरल जांच (RT-PCR Screening)",
+      tOther: "अन्य / कस्टम जांच (Other Test)"
+    }
+  };
+
+  function switchLanguage(lang) {
+    const t = translations[lang] || translations.en;
+    document.getElementById('titleText').innerText = t.title;
+    document.getElementById('subtitleText').innerText = t.subtitle;
+    document.getElementById('lblCustomerName').innerText = t.name;
+    document.getElementById('lblRole').innerText = t.role;
+    document.getElementById('lblAnimalType').innerText = t.animal;
+    document.getElementById('lblTag').innerText = t.tag;
+    document.getElementById('lblTests').innerText = t.tests;
+    document.getElementById('lblAddress').innerText = t.address;
+    document.getElementById('lblDate').innerText = t.date;
+    document.getElementById('lblSlot').innerText = t.slot;
+    document.getElementById('submitBtn').innerText = t.btn;
+
+    document.getElementById('optFarmer').innerText = t.farmer;
+    document.getElementById('optVet').innerText = t.vet;
+    document.getElementById('optPetOwner').innerText = t.petOwner;
+    document.getElementById('optRoleOther').innerText = t.other;
+
+    document.getElementById('optCattle').innerText = t.cattle;
+    document.getElementById('optPet').innerText = t.pet;
+    document.getElementById('optGoat').innerText = t.goat;
+    document.getElementById('optAnimalOther').innerText = t.other;
+
+    document.getElementById('t1').innerText = t.t1;
+    document.getElementById('t2').innerText = t.t2;
+    document.getElementById('t3').innerText = t.t3;
+    document.getElementById('t4').innerText = t.t4;
+    document.getElementById('t5').innerText = t.t5;
+    document.getElementById('tOther').innerText = t.tOther;
+  }
 
   async function submitBookingLead() {
     const name = document.getElementById('customer_name').value.trim();
     const address = document.getElementById('address').value.trim();
-    const role = document.getElementById('user_role').value;
-    const animal = document.getElementById('animal_type').value;
+    
+    let role = document.getElementById('user_role').value;
+    if (role === 'Other') {
+      role = document.getElementById('role_other_text').value.trim() || 'Other';
+    }
+
+    let animal = document.getElementById('animal_type').value;
+    if (animal === 'Other') {
+      animal = document.getElementById('animal_other_text').value.trim() || 'Other';
+    }
+
     const cowId = document.getElementById('cow_id').value.trim() || 'N/A';
     const visitDate = document.getElementById('visit_date').value;
     const visitSlot = document.getElementById('visit_slot').value;
@@ -103,7 +258,14 @@
     }
 
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    const selectedCategories = Array.from(checkboxes).map(cb => cb.value);
+    let selectedCategories = Array.from(checkboxes).map(cb => cb.value);
+
+    // If 'Other' test checkbox is selected, collect custom text entry
+    if (document.getElementById('chkOtherTest').checked) {
+      const customTestName = document.getElementById('test_other_text').value.trim();
+      selectedCategories = selectedCategories.filter(item => item !== 'Other');
+      selectedCategories.push(customTestName ? `Custom Test: ${customTestName}` : 'Custom Diagnostic Request');
+    }
 
     if (selectedCategories.length === 0) {
       alert("Please select at least one test type.");
@@ -112,7 +274,7 @@
 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = true;
-    submitBtn.innerText = "⏳ Submitting Request...";
+    submitBtn.innerText = "⏳ Submitting...";
 
     const urlParams = new URLSearchParams(window.location.search);
     const farmerPhone = urlParams.get('phone') || urlParams.get('bsuid') || '919373194945';
