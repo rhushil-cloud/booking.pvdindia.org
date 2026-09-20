@@ -14,10 +14,12 @@
     input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
     .btn { width: 100%; padding: 14px; background: #056543; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 20px; cursor: pointer; }
     .btn:disabled { background: #88a89c; }
+    .gps-btn { width: 100%; padding: 10px; background: #1a365d; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; margin-top: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
     .checkbox-item { display: flex; align-items: center; gap: 10px; font-weight: normal; font-size: 14px; }
     .checkbox-item input { width: auto; }
     .hidden-field { display: none; margin-top: 8px; }
+    .status-msg { font-size: 12px; color: #2b6cb0; margin-top: 4px; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -85,6 +87,12 @@
 
     <label id="lblAddress">3. Schedule Pickup Location *</label>
     <textarea id="address" rows="3" placeholder="Village / Landmark / House No" required></textarea>
+    
+    <!-- GPS LOCATION PICKER -->
+    <button type="button" class="gps-btn" onclick="captureGPSLocation()">
+      <span>📍</span> <span id="gpsBtnText">Capture Live GPS Location (Google Maps)</span>
+    </button>
+    <div id="gpsStatus" class="status-msg"></div>
 
     <div style="display:flex; gap:10px;">
       <div style="flex:1;">
@@ -107,6 +115,43 @@
 
 <script>
   document.getElementById('visit_date').valueAsDate = new Date();
+
+  let capturedLat = "";
+  let capturedLng = "";
+
+  function captureGPSLocation() {
+    const gpsStatus = document.getElementById('gpsStatus');
+    const addressBox = document.getElementById('address');
+
+    if (!navigator.geolocation) {
+      gpsStatus.innerText = "❌ Geolocation is not supported by your browser.";
+      return;
+    }
+
+    gpsStatus.innerText = "⏳ Fetching live GPS location...";
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        capturedLat = position.coords.latitude.toFixed(6);
+        capturedLng = position.coords.longitude.toFixed(6);
+        const mapUrl = `https://maps.google.com/?q=${capturedLat},${capturedLng}`;
+
+        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
+        
+        // Append map link to address box if not already present
+        if (!addressBox.value.includes('maps.google.com')) {
+          addressBox.value = addressBox.value.trim() 
+            ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl}`
+            : `📍 GPS Location: ${mapUrl}`;
+        }
+      },
+      (error) => {
+        console.error("GPS Error:", error);
+        gpsStatus.innerText = "⚠️ Location permission denied. Please enter address manually.";
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
 
   function toggleOtherInput(selectId, containerId) {
     const val = document.getElementById(selectId).value;
@@ -131,6 +176,7 @@
       tag: "Tag / Microchip / Pet Name (Optional)",
       tests: "2. Required Sample / Test Types *",
       address: "3. Schedule Pickup Location *",
+      gpsBtn: "Capture Live GPS Location (Google Maps)",
       date: "Preferred Date *",
       slot: "Time Slot *",
       btn: "Request Sample Visit",
@@ -157,6 +203,7 @@
       tag: "टॅग / मायक्रोचिप / प्राण्याचे नाव (ऐच्छिक)",
       tests: "२. आवश्यक तपासणी प्रकार *",
       address: "३. सॅम्पल पिकअप पत्ता *",
+      gpsBtn: "थेट जीपीएस लोकेशन मिळवा (Google Maps)",
       date: "पसंतीची तारीख *",
       slot: "वेळ *",
       btn: "सॅम्पल तपासणी बुक करा",
@@ -183,6 +230,7 @@
       tag: "टैग / माइक्रोचिप / नाम (वैकल्पिक)",
       tests: "२. आवश्यक टेस्ट के प्रकार *",
       address: "३. सैंपल पिकअप का पता *",
+      gpsBtn: "लाइव जीपीएस लोकेशन शेयर करें (Google Maps)",
       date: "पसंदीदा तारीख *",
       slot: "समय *",
       btn: "सैंपल बुकिंग का अनुरोध करें",
@@ -212,6 +260,7 @@
     document.getElementById('lblTag').innerText = t.tag;
     document.getElementById('lblTests').innerText = t.tests;
     document.getElementById('lblAddress').innerText = t.address;
+    document.getElementById('gpsBtnText').innerText = t.gpsBtn;
     document.getElementById('lblDate').innerText = t.date;
     document.getElementById('lblSlot').innerText = t.slot;
     document.getElementById('submitBtn').innerText = t.btn;
@@ -260,7 +309,6 @@
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
     let selectedCategories = Array.from(checkboxes).map(cb => cb.value);
 
-    // If 'Other' test checkbox is selected, collect custom text entry
     if (document.getElementById('chkOtherTest').checked) {
       const customTestName = document.getElementById('test_other_text').value.trim();
       selectedCategories = selectedCategories.filter(item => item !== 'Other');
@@ -290,6 +338,8 @@
       pincode: '412307',
       visit_date: visitDate,
       visit_slot: visitSlot,
+      latitude: capturedLat,
+      longitude: capturedLng,
       bsuid: farmerPhone
     };
 
