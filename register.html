@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PVD Farmer Care - Quick Registration</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f7f6; }
+    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+    input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
+    button { background: #25D366; color: white; font-weight: bold; border: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🚜 PVD Farmer Quick Registration</h2>
+    <form id="regForm">
+      <label>Full Name:</label>
+      <input type="text" id="name" placeholder="Enter your name" required>
+
+      <label>Phone Number:</label>
+      <input type="tel" id="phone" readonly>
+
+      <label>Primary Livestock / Pet:</label>
+      <select id="animal">
+        <option value="Cattle">Cattle (Cow/Buffalo)</option>
+        <option value="Goat/Sheep">Goat / Sheep</option>
+        <option value="Poultry">Poultry</option>
+        <option value="Pet">Pet (Dog/Cat)</option>
+      </select>
+
+      <button type="submit" id="subBtn">Register & Access App</button>
+    </form>
+  </div>
+
+  <script>
+    // Extract phone from URL query param
+    const urlParams = new URLSearchParams(window.location.search);
+    const phone = urlParams.get('phone') || '';
+    document.getElementById('phone').value = phone;
+
+    document.getElementById('regForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      document.getElementById('subBtn').innerText = "Registering...";
+
+      const payload = {
+        name: document.getElementById('name').value,
+        phone: phone,
+        animal: document.getElementById('animal').value
+      };
+
+      try {
+        const res = await fetch('https://pvd-api-24472d67-4103-4386-9e83-ae7a7c6619ec-asia-south1.a.run.app/api/quick-register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          // Redirect directly into Web App with Auto-Login
+          window.location.href = `https://rhushil-cloud.github.io/booking.pvdindia.org/app.html?authPhone=${phone}`;
+        }
+      } catch (err) {
+        alert("Registration failed. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
