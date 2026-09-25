@@ -3,50 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PVD Farmer Care - Quick Registration</title>
+  <title>PVD Farmers Care - Member Registration</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f7f6; }
-    .card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    input, select, button { width: 100%; padding: 12px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; }
-    button { background: #25D366; color: white; font-weight: bold; border: none; cursor: pointer; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+    .card { background: white; padding: 22px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 480px; margin: auto; }
+    h2 { color: #128C7E; margin-top: 0; font-size: 22px; }
+    p { color: #666; font-size: 14px; margin-bottom: 18px; }
+    label { display: block; margin-top: 12px; font-weight: 600; color: #333; font-size: 14px; }
+    input, select { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; font-size: 15px; }
+    button { width: 100%; background: #25D366; color: white; font-weight: bold; padding: 14px; margin-top: 22px; border-radius: 8px; border: none; font-size: 16px; cursor: pointer; }
+    button:disabled { background: #ccc; }
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>🚜 PVD Farmer Quick Registration</h2>
-    <form id="regForm">
-      <label>Full Name:</label>
-      <input type="text" id="name" placeholder="Enter your name" required>
 
-      <label>Phone Number:</label>
+  <div class="card">
+    <h2>🚜 PVD Farmers Care Registration</h2>
+    <p>Register your account to access lab reports, digital health records, and veterinary consultations.</p>
+    
+    <form id="pvdRegForm">
+      <label for="name">Full Name (पूर्ण नाव):</label>
+      <input type="text" id="name" placeholder="Enter full name" required>
+
+      <label for="phone">WhatsApp Mobile Number:</label>
       <input type="tel" id="phone" readonly>
 
-      <label>Primary Livestock / Pet:</label>
-      <select id="animal">
-        <option value="Cattle">Cattle (Cow/Buffalo)</option>
-        <option value="Goat/Sheep">Goat / Sheep</option>
-        <option value="Poultry">Poultry</option>
-        <option value="Pet">Pet (Dog/Cat)</option>
+      <label for="user_role">Register As (वापरकर्ता प्रकार):</label>
+      <select id="user_role">
+        <option value="Dairy Farmer / Livestock Owner">Dairy Farmer / Livestock Owner (पशूपालक)</option>
+        <option value="Pet Owner">Pet Owner (पाळीव प्राणी पालक)</option>
+        <option value="Poultry / Goat Farm Owner">Poultry / Goat Farm Owner (कुक्कुट/शेळी फार्म)</option>
+        <option value="Veterinarian / Paravet">Veterinarian / Paravet (पशुवैद्यक)</option>
+        <option value="PVD Coordinator / Agent">PVD Coordinator / Field Agent</option>
       </select>
 
-      <button type="submit" id="subBtn">Register & Access App</button>
+      <label for="primary_animal">Primary Livestock / Animal (प्रमुख प्राणी):</label>
+      <select id="primary_animal">
+        <option value="Cattle (Cow/Buffalo)">Cattle / Cow / Buffalo (गायी / म्हैस)</option>
+        <option value="Goat / Sheep">Goat / Sheep (शेळी / मेंढी)</option>
+        <option value="Poultry">Poultry / Layer / Broiler (कुक्कुटपालन)</option>
+        <option value="Pet (Dog/Cat)">Pet Dog / Cat (कुत्रा / मांजर)</option>
+        <option value="Horse / Equine">Horse / Equine (घोडा / श्‍वान)</option>
+        <option value="Multiple Livestock Types">Multiple / Mixed Herd (मिश्र शेती)</option>
+      </select>
+
+      <label for="district">District / Taluka (जिल्हा / तालुका):</label>
+      <input type="text" id="district" placeholder="e.g. Pune, Haveli / Solapur" required>
+
+      <button type="submit" id="subBtn">✅ Register & Access PVD Portal</button>
     </form>
   </div>
 
   <script>
-    // Extract phone from URL query param
     const urlParams = new URLSearchParams(window.location.search);
-    const phone = urlParams.get('phone') || '';
+    const phone = urlParams.get('phone') || urlParams.get('bsuid') || '';
     document.getElementById('phone').value = phone;
 
-    document.getElementById('regForm').addEventListener('submit', async (e) => {
+    document.getElementById('pvdRegForm').addEventListener('submit', async (e) => {
       e.preventDefault();
-      document.getElementById('subBtn').innerText = "Registering...";
+      const btn = document.getElementById('subBtn');
+      btn.disabled = true;
+      btn.innerText = "Registering...";
 
       const payload = {
         name: document.getElementById('name').value,
         phone: phone,
-        animal: document.getElementById('animal').value
+        user_role: document.getElementById('user_role').value,
+        animal: document.getElementById('primary_animal').value,
+        district: document.getElementById('district').value
       };
 
       try {
@@ -57,13 +81,20 @@
         });
         const data = await res.json();
         if (data.success) {
-          // Redirect directly into Web App with Auto-Login
+          alert("🎉 Registration Successful! PVD Farmers Care portal link sent to your WhatsApp.");
           window.location.href = `https://rhushil-cloud.github.io/booking.pvdindia.org/app.html?authPhone=${phone}`;
+        } else {
+          alert("Error: " + (data.error || "Failed to register."));
+          btn.disabled = false;
+          btn.innerText = "✅ Register & Access PVD Portal";
         }
       } catch (err) {
-        alert("Registration failed. Please try again.");
+        alert("Server error. Please check your connection.");
+        btn.disabled = false;
+        btn.innerText = "✅ Register & Access PVD Portal";
       }
     });
   </script>
+
 </body>
 </html>
