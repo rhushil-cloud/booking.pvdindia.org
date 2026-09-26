@@ -60,43 +60,37 @@
     // Paste your active Cloud Run backend domain here
     const BACKEND_URL = "https://pvd-api-142133401500.asia-south1.run.app";
 
-    document.getElementById('vacForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.innerText = "Registering...";
+document.getElementById('vacForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const payload = {
+    owner_name: document.getElementById('owner_name').value,
+    phone: document.getElementById('phone').value,
+    pet_type: document.getElementById('pet_type').value,
+    vaccine_type: document.getElementById('vaccine_type').value,
+    center: 'Pune Local OPD / Blue Cross Drive',
+    slot_time: 'Sept 28 Drive'
+  };
 
-      const payload = {
-        owner_name: document.getElementById('owner_name').value,
-        phone: document.getElementById('phone').value,
-        pet_type: document.getElementById('pet_type').value,
-        vaccine_type: document.getElementById('vaccine_type').value,
-        center: 'Pune Local OPD / Blue Cross Drive',
-        slot_time: 'Sept 28 Drive'
-      };
-
-      try {
-        const response = await fetch(`${BACKEND_URL}/api/register-vaccination`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-
-        const resData = await response.json();
-        if (resData.success) {
-          document.getElementById('vacForm').style.display = 'none';
-          document.getElementById('successMessage').style.display = 'block';
-        } else {
-          alert("Registration Error: " + (resData.error || "Please try again."));
-          btn.disabled = false;
-          btn.innerText = "🎟️ Register & Get Digital Pass";
-        }
-      } catch (err) {
-        alert("Network Error: Unable to connect to registration server. Please check your internet or try again.");
-        btn.disabled = false;
-        btn.innerText = "🎟️ Register & Get Digital Pass";
-      }
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/register-vaccination`, {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(payload)
     });
+
+    const resData = await response.json();
+    if (resData.success) {
+      alert("🎉 Registration Successful! Your digital pass has been sent to WhatsApp.");
+    } else {
+      alert("Error: " + (resData.error || "Failed to register."));
+    }
+  } catch (err) {
+    alert("Network Error: Unable to reach backend server.");
+  }
+});
   </script>
 
 </body>
