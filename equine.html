@@ -6,16 +6,18 @@
   <title>PVD Equine Diagnostic Camp - Coggins & Glanders</title>
   <style>
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; margin: 0; padding: 16px; }
-    .card { max-width: 480px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
     h2 { color: #128C7E; margin-top: 0; text-align: center; font-size: 20px; }
     .horse-block { background: #f9fbfb; border: 1px solid #e0ece9; padding: 14px; border-radius: 8px; margin-bottom: 12px; position: relative; }
-    label { font-size: 13px; font-weight: bold; color: #333; display: block; margin-top: 8px; }
+    label { font-size: 13px; font-weight: bold; color: #333; display: block; margin-top: 10px; }
     input, select { width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    .checkbox-group { display: flex; gap: 15px; margin-top: 6px; font-size: 13px; }
+    .checkbox-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; font-size: 13px; }
     .btn-add { background: #1A365D; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
     .btn-submit { background: #25D366; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 16px; }
     .remove-btn { position: absolute; top: 10px; right: 10px; color: #d9534f; border: none; background: none; font-weight: bold; cursor: pointer; }
     .rx-box { background: #eef7f6; padding: 12px; border-radius: 8px; margin-top: 15px; }
+    .row { display: flex; gap: 10px; }
+    .row > div { flex: 1; }
   </style>
 </head>
 <body>
@@ -27,33 +29,41 @@
   <form id="equineForm">
     <!-- Owner Information -->
     <label>Owner / Stud Farm Name *</label>
-    <input type="text" id="ownerName" required placeholder="e.g. Royal Turf Club Stables">
+    <input type="text" id="ownerName" required placeholder="e.g. Royal Turf Club Stables / Raj">
 
-    <label>WhatsApp Phone Number *</label>
-    <input type="tel" id="ownerPhone" required readonly>
+    <div class="row">
+      <div>
+        <label>WhatsApp Number *</label>
+        <input type="tel" id="ownerPhone" required placeholder="919373194945">
+      </div>
+      <div>
+        <label>Alt Phone Number</label>
+        <input type="tel" id="altPhone" placeholder="e.g. 9822012345">
+      </div>
+    </div>
 
     <div class="rx-box">
       <label style="color: #1A365D; margin-top:0;">📄 Vet Prescription / Requisition Letter</label>
       <input type="file" id="vetPrescription" accept="image/*,.pdf" style="background: white; padding: 6px;">
       
       <div style="margin-top: 8px; font-size: 12px; color: #555; display: flex; align-items: center; gap: 6px;">
-        <input type="checkbox" id="onsitePrescription" style="width: auto; margin: 0;">
-        <span>I will obtain a requisition from the PVD On-Site Vet at camp.</span>
+        <input type="checkbox" id="onsitePrescription" style="width: auto; margin: 0;" checked>
+        <span>I will obtain requisition from PVD On-Site Vet at camp.</span>
       </div>
     </div>
 
     <hr style="margin: 18px 0; border: 0; border-top: 1px solid #eee;">
 
-    <!-- Dynamic Horse List -->
+    <!-- Dynamic Horse Profiles -->
     <div id="horseList"></div>
 
     <button type="button" class="btn-add" onclick="addHorseCard()">+ Add Another Horse</button>
-    <button type="submit" class="btn-submit">Submit & Get WhatsApp Pass</button>
+    <button type="submit" id="submitBtn" class="btn-submit">Submit & Get WhatsApp Pass</button>
   </form>
 </div>
 
 <script>
-  // Auto-fill phone from URL
+  // Auto-fill phone from URL (Editable now)
   const urlParams = new URLSearchParams(window.location.search);
   document.getElementById('ownerPhone').value = urlParams.get('phone') || '';
 
@@ -69,19 +79,22 @@
       <strong>Horse #${horseCount} Profile</strong>
       
       <label>Horse Name *</label>
-      <input type="text" class="h-name" required placeholder="e.g. Thunder Gold">
+      <input type="text" class="h-name" required placeholder="e.g. Thunder Gold / Rani">
 
-      <label>Microchip / Passport ID *</label>
-      <input type="text" class="h-chip" required placeholder="e.g. 985141001234567">
+      <label>Microchip / Passport ID / Tag *</label>
+      <input type="text" class="h-chip" required placeholder="e.g. 985141001234567 / 21465">
 
       <label>Breed & Color</label>
-      <input type="text" class="h-breed" placeholder="e.g. Thoroughbred - Chestnut">
+      <input type="text" class="h-breed" placeholder="e.g. Thoroughbred / Marwari - Bay">
 
       <label>Tests Required</label>
       <div class="checkbox-group">
         <label><input type="checkbox" class="t-coggins" checked> Coggins (EIA)</label>
         <label><input type="checkbox" class="t-glanders" checked> Glanders</label>
       </div>
+
+      <label style="margin-top:8px;">Other Test / Special Instructions</label>
+      <input type="text" class="t-other" placeholder="e.g. Equine Influenza / Complete Blood Count">
     `;
     document.getElementById('horseList').appendChild(div);
   }
@@ -90,11 +103,15 @@
     document.getElementById(`horse_${id}`).remove();
   }
 
-  addHorseCard(); // Add 1st card by default
+  addHorseCard(); // First card by default
 
   document.getElementById('equineForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.innerText = "Submitting...";
+    submitBtn.disabled = true;
+
     const horses = [];
     document.querySelectorAll('.horse-block').forEach(card => {
       horses.push({
@@ -102,13 +119,15 @@
         microchip: card.querySelector('.h-chip').value,
         breedColor: card.querySelector('.h-breed').value,
         coggins: card.querySelector('.t-coggins').checked,
-        glanders: card.querySelector('.t-glanders').checked
+        glanders: card.querySelector('.t-glanders').checked,
+        otherTests: card.querySelector('.t-other').value
       });
     });
 
     const payload = {
       ownerName: document.getElementById('ownerName').value,
       phone: document.getElementById('ownerPhone').value,
+      altPhone: document.getElementById('altPhone').value,
       onsiteRx: document.getElementById('onsitePrescription').checked,
       horses: horses
     };
@@ -120,14 +139,19 @@
         body: JSON.stringify(payload)
       });
       
-      if (response.ok) {
-        alert('✅ Registration Successful! Your digital pass has been sent via WhatsApp.');
+      const resData = await response.json();
+
+      if (response.ok && resData.success) {
+        alert('✅ Registration Successful! Digital Pass sent to your WhatsApp.');
         window.close();
       } else {
-        alert('Error submitting registration.');
+        alert('Submission Error: ' + (resData.error || 'Please try again.'));
       }
     } catch(err) {
-      alert('Network error. Please try again.');
+      alert('Network error. Check backend deployment or try again.');
+    } finally {
+      submitBtn.innerText = "Submit & Get WhatsApp Pass";
+      submitBtn.disabled = false;
     }
   });
 </script>
