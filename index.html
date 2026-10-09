@@ -164,7 +164,7 @@
     const container = document.getElementById('test_other_container');
     container.style.display = chk.checked ? 'block' : 'none';
   }
-async function submitBookingLead() {
+  async function submitBookingLead() {
     const nameInput = document.getElementById('customer_name');
     const addressInput = document.getElementById('address');
     
@@ -235,7 +235,7 @@ async function submitBookingLead() {
     };
 
     try {
-      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/book-pvd-sample', {
+      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/book-slot', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
@@ -248,13 +248,11 @@ async function submitBookingLead() {
         alert("🎉 Request Submitted!\n\nBooking ID: " + refId + "\n\nConfirmation sent to your WhatsApp!");
         window.location.href = "https://wa.me/919373194945";
       } else {
-        alert("⚠️ Notice: " + (data.error || "Request recorded. Check WhatsApp for confirmation."));
-        window.location.href = "https://wa.me/919373194945";
+        alert("⚠️ Notice: " + (data.error || "Unable to submit booking."));
       }
     } catch (err) {
       console.error("Submission Error:", err);
-      alert("🎉 Request Submitted! Your confirmation is being delivered to your WhatsApp.");
-      window.location.href = "https://wa.me/919373194945";
+      alert("Connection Error: Unable to reach PVD server. Please check your internet connection.");
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerText = "Request Sample Visit";
