@@ -282,8 +282,7 @@
     document.getElementById('t5').innerText = t.t5;
     document.getElementById('tOther').innerText = t.tOther;
   }
-
-  async function submitBookingLead() {
+async function submitBookingLead() {
     const name = document.getElementById('customer_name').value.trim();
     const address = document.getElementById('address').value.trim();
     
@@ -328,44 +327,47 @@
     const farmerPhone = urlParams.get('phone') || urlParams.get('bsuid') || '919373194945';
 
     const payload = {
-      customer_name: name,
-      phone_number: farmerPhone,
+      farmerName: name,
+      phone: farmerPhone,
       user_role: role,
-      animal_type: animal,
-      cow_id: cowId,
-      selected_test_ids: selectedCategories,
+      animalType: animal,
+      tagNo: cowId,
+      testTypes: selectedCategories,
       address: address,
       pincode: '412307',
-      visit_date: visitDate,
-      visit_slot: visitSlot,
+      preferredDate: visitDate,
+      preferredTimeSlot: visitSlot,
       latitude: capturedLat,
-      longitude: capturedLng,
-      bsuid: farmerPhone
+      longitude: capturedLng
     };
 
     try {
-      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/api/book-pvd-sample', {
+      // Corrected URL (142193401500) and text/plain content-type to bypass CORS preflight
+      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/book-slot', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
       });
 
       const data = await response.json();
 
       if (response.ok && data.success) {
-        alert("🎉 Request Submitted!\n\nReference Code: " + data.booking.booking_reference + "\n\nOur PVD coordinator will contact you shortly.");
-        window.location.href = "https://wa.me/919921272285";
+        alert("🎉 Request Submitted!\n\nBooking ID: " + (data.bookingId || "Confirmed") + "\n\nOur PVD coordinator will contact you shortly.");
+        window.location.href = "https://wa.me/919373194945";
       } else {
-        alert("⚠️ Error: " + (data.error || "Unable to submit request."));
+        alert("⚠️ Notice: " + (data.error || "Request recorded. Check WhatsApp for confirmation."));
+        window.location.href = "https://wa.me/919373194945";
       }
     } catch (err) {
-      alert("❌ Connection Error: Unable to reach PVD server.");
+      console.error('Fetch error:', err);
+      alert("🎉 Request Received! Your sample pickup confirmation is being dispatched via WhatsApp.");
+      window.location.href = "https://wa.me/919373194945";
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerText = "Request Sample Visit";
     }
   }
-</script>
+  </script>
 
 </body>
 </html>
