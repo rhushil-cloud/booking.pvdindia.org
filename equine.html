@@ -151,66 +151,77 @@
   } else {
     addHorseCard();
   }
-  document.getElementById('equineForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    
-    if (!document.getElementById('acceptTerms').checked) {
-      alert('Please accept the Terms & Conditions regarding sample handling.');
-      return;
-    }
+document.getElementById('equineForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
 
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerText = "Submitting...";
-    submitBtn.disabled = true;
+  if (!document.getElementById('acceptTerms').checked) {
+    alert('Please accept the Terms & Conditions regarding sample handling.');
+    return;
+  }
 
-    const horses = [];
-    document.querySelectorAll('.horse-block').forEach(card => {
-      horses.push({
-        name: card.querySelector('.h-name').value || 'Horse',
-        microchip: card.querySelector('.h-chip').value || 'N/A',
-        gender: card.querySelector('.h-gender').value,
-        age: card.querySelector('.h-age').value || 'N/A',
-        breed: card.querySelector('.h-breed').value,
-        color: card.querySelector('.h-color').value || 'N/A',
-        markings: card.querySelector('.h-markings').value || 'None',
-        coggins: true,
-        glanders: true
-      });
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.innerText = "⏳ Processing Booking...";
+  submitBtn.disabled = true;
+
+  const horses = [];
+  document.querySelectorAll('.horse-block').forEach(card => {
+    horses.push({
+      name: card.querySelector('.h-name').value || 'Horse',
+      microchip: card.querySelector('.h-chip').value || 'N/A',
+      gender: card.querySelector('.h-gender').value,
+      age: card.querySelector('.h-age').value || 'N/A',
+      breed: card.querySelector('.h-breed').value,
+      color: card.querySelector('.h-color').value || 'N/A',
+      markings: card.querySelector('.h-markings').value || 'None',
+      coggins: true,
+      glanders: true
+    });
+  });
+
+  const payload = {
+    ownerName: document.getElementById('ownerName').value,
+    phone: document.getElementById('ownerPhone').value,
+    altPhone: document.getElementById('altPhone').value || '',
+    acceptedTerms: true,
+    horses: horses
+  };
+
+  try {
+    const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/register-equine-camp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
     });
 
-    const payload = {
-      ownerName: document.getElementById('ownerName').value,
-      phone: document.getElementById('ownerPhone').value,
-      altPhone: document.getElementById('altPhone').value || '',
-      acceptedTerms: true,
-      horses: horses
-    };
+    const resData = await response.json();
 
-    try {
-      // Send as text/plain to bypass browser CORS preflight checks
-      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/register-equine-camp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(payload)
-      });
-
-      const resData = await response.json();
-
-      if (response.ok && resData.success) {
-        alert('🎉 Booking Successful! Digital Pass sent to your WhatsApp.');
-        window.location.reload();
-      } else {
-        alert('Server Error: ' + (resData.error || 'Failed to record entry.'));
-      }
-    } catch (err) {
-      console.error('Fetch Error:', err);
-      alert('🎉 Request Submitted! Digital Pass is being processed and sent to your WhatsApp.');
-    } finally {
+    if (response.ok && resData.success) {
+      // Show full success screen & direct return link
+      document.querySelector('.card').innerHTML = `
+        <div style="text-align: center; padding: 20px 10px;">
+          <div style="font-size: 50px;">🎉</div>
+          <h2 style="color: #128C7E; margin-top: 10px;">Booking Confirmed!</h2>
+          <p style="font-size: 14px; color: #333; margin-bottom: 20px;">
+            Your equine diagnostic pass has been generated and sent to your WhatsApp number: <strong>+${payload.phone}</strong>.
+          </p>
+          <a href="https://wa.me/919373194945" style="display: block; width: 100%; background: #25D366; color: white; padding: 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; box-sizing: border-box;">
+            💬 Return to WhatsApp Chat
+          </a>
+        </div>
+      `;
+    } else {
+      alert('Error: ' + (resData.error || 'Submission failed. Please try again.'));
       submitBtn.innerText = "Submit Booking & Get Pass";
       submitBtn.disabled = false;
     }
-  });
-  </script>
+  } catch (err) {
+    console.error('Fetch Error:', err);
+    alert('Network Connection Error: Please verify internet access and re-submit.');
+    submitBtn.innerText = "Submit Booking & Get Pass";
+    submitBtn.disabled = false;
+  }
+});  
+</script>
 
 </body>
 </html>
