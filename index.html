@@ -164,8 +164,7 @@
     const container = document.getElementById('test_other_container');
     container.style.display = chk.checked ? 'block' : 'none';
   }
-
-  async function submitBookingLead() {
+async function submitBookingLead() {
     const nameInput = document.getElementById('customer_name');
     const addressInput = document.getElementById('address');
     
@@ -230,14 +229,13 @@
       preferredDate: visitDate,
       visit_slot: visitSlot,
       preferredTimeSlot: visitSlot,
-      latitude: capturedLat,
-      longitude: capturedLng,
+      latitude: capturedLat || '',
+      longitude: capturedLng || '',
       bsuid: farmerPhone
     };
 
     try {
-      // Direct POST to Cloud Run Gateway using text/plain payload to prevent mobile CORS preflight drops
-      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/book-slot', {
+      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/book-pvd-sample', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
@@ -262,6 +260,6 @@
       submitBtn.innerText = "Request Sample Visit";
     }
   }
-</script>
+  </script>
 </body>
 </html>
