@@ -186,12 +186,14 @@
       acceptedTerms: true,
       horses: horses
     };
-try {
+
+    try {
       const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/register-equine-camp', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(payload)
-});
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
       const resData = await response.json();
 
       if (response.ok && resData.success) {
@@ -207,7 +209,6 @@ try {
       submitBtn.innerText = "Submit Booking & Get Pass";
       submitBtn.disabled = false;
     }
-    
   });
 </script>
 
