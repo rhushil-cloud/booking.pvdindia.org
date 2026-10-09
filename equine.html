@@ -163,6 +163,9 @@
   submitBtn.innerText = "⏳ Processing Booking...";
   submitBtn.disabled = true;
 
+  const urlParams = new URLSearchParams(window.location.search);
+  const ownerPhone = document.getElementById('ownerPhone').value.trim() || urlParams.get('phone') || '919373194945';
+
   const horses = [];
   document.querySelectorAll('.horse-block').forEach(card => {
     horses.push({
@@ -180,8 +183,8 @@
 
   const payload = {
     ownerName: document.getElementById('ownerName').value,
-    phone: document.getElementById('ownerPhone').value,
-    altPhone: document.getElementById('altPhone').value || '',
+    phone: ownerPhone,
+    altPhone: document.getElementById('altPhone')?.value || '',
     acceptedTerms: true,
     horses: horses
   };
@@ -196,30 +199,21 @@
     const resData = await response.json();
 
     if (response.ok && resData.success) {
-      document.querySelector('.card').innerHTML = `
-        <div style="text-align: center; padding: 20px 10px;">
-          <div style="font-size: 50px;">🎉</div>
-          <h2 style="color: #128C7E; margin-top: 10px;">Booking Confirmed!</h2>
-          <p style="font-size: 14px; color: #333; margin-bottom: 20px;">
-            Your equine pass has been recorded and delivered to your WhatsApp: <strong>+${payload.phone}</strong>.
-          </p>
-          <a href="https://wa.me/919373194945" style="display: block; width: 100%; background: #25D366; color: white; padding: 14px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 16px; box-sizing: border-box;">
-            💬 Return to WhatsApp Chat
-          </a>
-        </div>
-      `;
+      alert('🎉 Equine Registration Successful! Pass sent to your WhatsApp.');
+      window.location.href = "https://wa.me/919373194945";
     } else {
-      alert('Notice: ' + (resData.error || 'Submission complete. Check WhatsApp.'));
+      alert('Error: ' + (resData.error || 'Submission failed.'));
+      submitBtn.innerText = "Submit Booking & Get Pass";
+      submitBtn.disabled = false;
     }
   } catch (err) {
     console.error('Fetch Error:', err);
-    alert('Notice: Submission sent! Please check your WhatsApp for confirmation.');
-  } finally {
+    alert('Connection Error: Unable to reach PVD server. Please check your internet connection.');
     submitBtn.innerText = "Submit Booking & Get Pass";
     submitBtn.disabled = false;
   }
 });
-</script>
+  </script>
 
 </body>
 </html>
