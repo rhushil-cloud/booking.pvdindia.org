@@ -341,9 +341,9 @@ async function submitBookingLead() {
       longitude: capturedLng
     };
 
-    try {
-      // Corrected URL (142193401500) and text/plain content-type to bypass CORS preflight
-      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/book-slot', {
+   try {
+      // Correct Cloud Run Project Number: 142193401500
+      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/book-pvd-sample', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
@@ -352,21 +352,19 @@ async function submitBookingLead() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        alert("🎉 Request Submitted!\n\nBooking ID: " + (data.bookingId || "Confirmed") + "\n\nOur PVD coordinator will contact you shortly.");
+        const refCode = data.booking ? data.booking.booking_reference : (data.bookingId || "Confirmed");
+        alert("🎉 Request Submitted!\n\nReference Code: " + refCode + "\n\nOur PVD coordinator will contact you shortly.");
         window.location.href = "https://wa.me/919373194945";
       } else {
-        alert("⚠️ Notice: " + (data.error || "Request recorded. Check WhatsApp for confirmation."));
-        window.location.href = "https://wa.me/919373194945";
+        alert("⚠️ Notice: " + (data.error || "Unable to process request."));
       }
     } catch (err) {
       console.error('Fetch error:', err);
-      alert("🎉 Request Received! Your sample pickup confirmation is being dispatched via WhatsApp.");
-      window.location.href = "https://wa.me/919373194945";
+      alert("⚠️ Network Error: Unable to connect to server. Please check connection.");
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerText = "Request Sample Visit";
     }
-  }
   </script>
 
 </body>
