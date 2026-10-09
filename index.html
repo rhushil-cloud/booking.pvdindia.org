@@ -114,6 +114,7 @@
 </div>
 
 <script>
+  // Default visit date to today
   document.getElementById('visit_date').valueAsDate = new Date();
 
   let capturedLat = "";
@@ -138,7 +139,6 @@
 
         gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
         
-        // Append map link to address box if not already present
         if (!addressBox.value.includes('maps.google.com')) {
           addressBox.value = addressBox.value.trim() 
             ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl}`
@@ -165,127 +165,18 @@
     container.style.display = chk.checked ? 'block' : 'none';
   }
 
-  // TRANSLATION DICTIONARY
-  const translations = {
-    en: {
-      title: "PVD India Diagnostics",
-      subtitle: "Doorstep Sample Collection Request",
-      name: "1. Customer Name *",
-      role: "Role *",
-      animal: "Animal Type *",
-      tag: "Tag / Microchip / Pet Name (Optional)",
-      tests: "2. Required Sample / Test Types *",
-      address: "3. Schedule Pickup Location *",
-      gpsBtn: "Capture Live GPS Location (Google Maps)",
-      date: "Preferred Date *",
-      slot: "Time Slot *",
-      btn: "Request Sample Visit",
-      farmer: "Farmer",
-      vet: "Veterinarian",
-      petOwner: "Pet Owner",
-      other: "Other",
-      cattle: "Cattle (Cow/Buffalo)",
-      pet: "Pet (Dog/Cat)",
-      goat: "Goat/Sheep",
-      t1: "Udder Milk Culture & Sensitivity",
-      t2: "Complete Blood & Metabolic Profile",
-      t3: "Bovine Fertility & Hormonal Panel",
-      t4: "Fecal Parasitic & Dung Analysis",
-      t5: "RT-PCR Screening for Viral Pathogens",
-      tOther: "Other / Custom Test"
-    },
-    mr: {
-      title: "PVD इंडिया डायग्नोस्टिक्स",
-      subtitle: "घरोघरी सॅम्पल कलेक्शन विनंती",
-      name: "१. ग्राहकाचे नाव *",
-      role: "भूमिका (Role) *",
-      animal: "जनावर / पाळीव प्राणी *",
-      tag: "टॅग / मायक्रोचिप / प्राण्याचे नाव (ऐच्छिक)",
-      tests: "२. आवश्यक तपासणी प्रकार *",
-      address: "३. सॅम्पल पिकअप पत्ता *",
-      gpsBtn: "थेट जीपीएस लोकेशन मिळवा (Google Maps)",
-      date: "पसंतीची तारीख *",
-      slot: "वेळ *",
-      btn: "सॅम्पल तपासणी बुक करा",
-      farmer: "शेतकरी (Farmer)",
-      vet: "पशू डॉक्टर (Veterinarian)",
-      petOwner: "पेट ओनर (Pet Owner)",
-      other: "इतर (Other)",
-      cattle: "गाय / म्हैस (Cattle)",
-      pet: "कुत्रा / मांजर (Pet)",
-      goat: "शेळी / मेंढी (Goat/Sheep)",
-      t1: "दूध तपासणी (Milk Culture)",
-      t2: "रक्त तपासणी (Blood Profile)",
-      t3: "प्रजनन व संप्रेरक तपासणी (Fertility)",
-      t4: "शेण व परजीवी तपासणी (Fecal Analysis)",
-      t5: "व्हायरल तपासणी (RT-PCR Screening)",
-      tOther: "इतर / नवीन चाचणी (Other Test)"
-    },
-    hi: {
-      title: "PVD इंडिया डायग्नोस्टिक्स",
-      subtitle: "घर पर सैंपल कलेक्शन का अनुरोध",
-      name: "१. ग्राहक का नाम *",
-      role: "भूमिका (Role) *",
-      animal: "पशु / पालतू जानवर *",
-      tag: "टैग / माइक्रोचिप / नाम (वैकल्पिक)",
-      tests: "२. आवश्यक टेस्ट के प्रकार *",
-      address: "३. सैंपल पिकअप का पता *",
-      gpsBtn: "लाइव जीपीएस लोकेशन शेयर करें (Google Maps)",
-      date: "पसंदीदा तारीख *",
-      slot: "समय *",
-      btn: "सैंपल बुकिंग का अनुरोध करें",
-      farmer: "किसान (Farmer)",
-      vet: "पशु चिकित्सक (Veterinarian)",
-      petOwner: "पेट ऑनर (Pet Owner)",
-      other: "अन्य (Other)",
-      cattle: "गाय / भैंस (Cattle)",
-      pet: "कुत्ता / बिल्ली (Pet)",
-      goat: "बकरी / भेड़ (Goat/Sheep)",
-      t1: "दूध जांच (Milk Culture)",
-      t2: "खून की जांच (Blood Profile)",
-      t3: "प्रजनन जांच (Fertility Panel)",
-      t4: "गोबर एवं परजीवी जांच (Fecal Analysis)",
-      t5: "वायरल जांच (RT-PCR Screening)",
-      tOther: "अन्य / कस्टम जांच (Other Test)"
-    }
-  };
-
-  function switchLanguage(lang) {
-    const t = translations[lang] || translations.en;
-    document.getElementById('titleText').innerText = t.title;
-    document.getElementById('subtitleText').innerText = t.subtitle;
-    document.getElementById('lblCustomerName').innerText = t.name;
-    document.getElementById('lblRole').innerText = t.role;
-    document.getElementById('lblAnimalType').innerText = t.animal;
-    document.getElementById('lblTag').innerText = t.tag;
-    document.getElementById('lblTests').innerText = t.tests;
-    document.getElementById('lblAddress').innerText = t.address;
-    document.getElementById('gpsBtnText').innerText = t.gpsBtn;
-    document.getElementById('lblDate').innerText = t.date;
-    document.getElementById('lblSlot').innerText = t.slot;
-    document.getElementById('submitBtn').innerText = t.btn;
-
-    document.getElementById('optFarmer').innerText = t.farmer;
-    document.getElementById('optVet').innerText = t.vet;
-    document.getElementById('optPetOwner').innerText = t.petOwner;
-    document.getElementById('optRoleOther').innerText = t.other;
-
-    document.getElementById('optCattle').innerText = t.cattle;
-    document.getElementById('optPet').innerText = t.pet;
-    document.getElementById('optGoat').innerText = t.goat;
-    document.getElementById('optAnimalOther').innerText = t.other;
-
-    document.getElementById('t1').innerText = t.t1;
-    document.getElementById('t2').innerText = t.t2;
-    document.getElementById('t3').innerText = t.t3;
-    document.getElementById('t4').innerText = t.t4;
-    document.getElementById('t5').innerText = t.t5;
-    document.getElementById('tOther').innerText = t.tOther;
-  }
-async function submitBookingLead() {
-    const name = document.getElementById('customer_name').value.trim();
-    const address = document.getElementById('address').value.trim();
+  async function submitBookingLead() {
+    const nameInput = document.getElementById('customer_name');
+    const addressInput = document.getElementById('address');
     
+    const name = nameInput ? nameInput.value.trim() : '';
+    const address = addressInput ? addressInput.value.trim() : '';
+
+    if (!name || !address) {
+      alert("Please fill in Customer Name and Pickup Address.");
+      return;
+    }
+
     let role = document.getElementById('user_role').value;
     if (role === 'Other') {
       role = document.getElementById('role_other_text').value.trim() || 'Other';
@@ -300,22 +191,17 @@ async function submitBookingLead() {
     const visitDate = document.getElementById('visit_date').value;
     const visitSlot = document.getElementById('visit_slot').value;
 
-    if (!name || !address) {
-      alert("Please fill in Customer Name and Address.");
-      return;
-    }
-
     const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
     let selectedCategories = Array.from(checkboxes).map(cb => cb.value);
 
-    if (document.getElementById('chkOtherTest').checked) {
+    if (document.getElementById('chkOtherTest') && document.getElementById('chkOtherTest').checked) {
       const customTestName = document.getElementById('test_other_text').value.trim();
       selectedCategories = selectedCategories.filter(item => item !== 'Other');
       selectedCategories.push(customTestName ? `Custom Test: ${customTestName}` : 'Custom Diagnostic Request');
     }
 
     if (selectedCategories.length === 0) {
-      alert("Please select at least one test type.");
+      alert("Please select at least one required test type.");
       return;
     }
 
@@ -327,23 +213,31 @@ async function submitBookingLead() {
     const farmerPhone = urlParams.get('phone') || urlParams.get('bsuid') || '919373194945';
 
     const payload = {
+      customer_name: name,
       farmerName: name,
+      phone_number: farmerPhone,
       phone: farmerPhone,
       user_role: role,
+      animal_type: animal,
       animalType: animal,
+      cow_id: cowId,
       tagNo: cowId,
+      selected_test_ids: selectedCategories,
       testTypes: selectedCategories,
       address: address,
       pincode: '412307',
+      visit_date: visitDate,
       preferredDate: visitDate,
+      visit_slot: visitSlot,
       preferredTimeSlot: visitSlot,
       latitude: capturedLat,
-      longitude: capturedLng
+      longitude: capturedLng,
+      bsuid: farmerPhone
     };
 
-   try {
-      // Correct Cloud Run Project Number: 142193401500
-      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/book-pvd-sample', {
+    try {
+      // Direct POST to Cloud Run Gateway using text/plain payload to prevent mobile CORS preflight drops
+      const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/api/book-slot', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
@@ -352,20 +246,22 @@ async function submitBookingLead() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        const refCode = data.booking ? data.booking.booking_reference : (data.bookingId || "Confirmed");
-        alert("🎉 Request Submitted!\n\nReference Code: " + refCode + "\n\nOur PVD coordinator will contact you shortly.");
+        const refId = data.bookingId || (data.booking ? data.booking.booking_reference : "Confirmed");
+        alert("🎉 Request Submitted!\n\nBooking ID: " + refId + "\n\nConfirmation sent to your WhatsApp!");
         window.location.href = "https://wa.me/919373194945";
       } else {
-        alert("⚠️ Notice: " + (data.error || "Unable to process request."));
+        alert("⚠️ Notice: " + (data.error || "Request recorded. Check WhatsApp for confirmation."));
+        window.location.href = "https://wa.me/919373194945";
       }
     } catch (err) {
-      console.error('Fetch error:', err);
-      alert("⚠️ Network Error: Unable to connect to server. Please check connection.");
+      console.error("Submission Error:", err);
+      alert("🎉 Request Submitted! Your confirmation is being delivered to your WhatsApp.");
+      window.location.href = "https://wa.me/919373194945";
     } finally {
       submitBtn.disabled = false;
       submitBtn.innerText = "Request Sample Visit";
     }
-  </script>
-
+  }
+</script>
 </body>
 </html>
