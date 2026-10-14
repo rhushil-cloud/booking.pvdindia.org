@@ -66,21 +66,24 @@
       btn.innerText = "Registering...";
 
       const payload = {
-        name: document.getElementById('name').value,
-        phone: phone,
+        customer_name: document.getElementById('name').value,
+        phone_number: phone,
         user_role: document.getElementById('user_role').value,
-        animal: document.getElementById('primary_animal').value,
-        district: document.getElementById('district').value
+        animal_type: document.getElementById('primary_animal').value,
+        location: document.getElementById('district').value,
+        testTypes: 'New Registration'
       };
 
       try {
-        const res = await fetch('https://pvd-api-24472d67-4103-4386-9e83-ae7a7c6619ec-asia-south1.a.run.app/api/quick-register', {
+        // ACTIVE CLOUD RUN BACKEND ENDPOINT
+        const res = await fetch('https://pvd-api-142133401500.asia-south1.run.app/book-slot', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        
         const data = await res.json();
-        if (data.success) {
+        if (res.ok && data.success) {
           alert("🎉 Registration Successful! PVD Farmers Care portal link sent to your WhatsApp.");
           window.location.href = `https://rhushil-cloud.github.io/booking.pvdindia.org/app.html?authPhone=${phone}`;
         } else {
