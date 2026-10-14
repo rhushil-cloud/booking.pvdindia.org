@@ -13,16 +13,18 @@
     .horse-block { background: #f9fbfb; border: 1px solid #dbe8e5; padding: 16px; border-radius: 10px; margin-bottom: 16px; position: relative; }
     .section-title { font-size: 14px; color: #1A365D; border-bottom: 1px solid #e0ece9; padding-bottom: 4px; margin-top: 12px; margin-bottom: 8px; font-weight: bold; }
     label { font-size: 13px; font-weight: bold; color: #333; display: block; margin-top: 8px; }
-    input, select { width: 100%; padding: 9px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    input, select, textarea { width: 100%; padding: 9px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
     .checkbox-group { display: flex; gap: 20px; margin-top: 8px; font-size: 13px; font-weight: bold; }
     .checkbox-item { display: flex; align-items: center; gap: 6px; }
     .checkbox-item input { width: auto; margin: 0; }
     .terms-box { background: #fff8e7; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin-top: 16px; font-size: 12px; color: #856404; }
     .btn-add { background: #1A365D; color: white; border: none; padding: 11px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
     .btn-submit { background: #25D366; color: white; border: none; padding: 13px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 18px; }
+    .btn-gps { background: #007bff; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
     .remove-btn { position: absolute; top: 12px; right: 12px; color: #d9534f; border: none; background: none; font-weight: bold; cursor: pointer; font-size: 13px; }
     .row { display: flex; gap: 10px; }
     .row > div { flex: 1; }
+    .status-msg { font-size: 12px; font-weight: bold; margin-top: 4px; color: #128C7E; }
   </style>
 </head>
 <body>
@@ -53,6 +55,16 @@
       </div>
     </div>
 
+    <!-- GPS Location Capture Section -->
+    <div class="section-title">📍 Stable / Pickup Location</div>
+    <label>Pickup Address / Stable Location *</label>
+    <textarea id="address" rows="2" placeholder="Enter stable address / landmark" required></textarea>
+    
+    <button type="button" class="btn-gps" onclick="captureGPSLocation()">
+      📍 Capture Live GPS Location (Google Maps)
+    </button>
+    <div id="gpsStatus" class="status-msg"></div>
+
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
 
     <!-- Dynamic Horse Profiles -->
@@ -79,6 +91,40 @@
   document.getElementById('ownerPhone').value = urlParams.get('phone') || '';
 
   let horseCount = 0;
+  let capturedLat = "";
+  let capturedLng = "";
+
+  function captureGPSLocation() {
+    const gpsStatus = document.getElementById('gpsStatus');
+    const addressBox = document.getElementById('address');
+
+    if (!navigator.geolocation) {
+      gpsStatus.innerText = "❌ Geolocation is not supported by your browser.";
+      return;
+    }
+
+    gpsStatus.innerText = "⏳ Fetching live GPS location...";
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        capturedLat = position.coords.latitude.toFixed(6);
+        capturedLng = position.coords.longitude.toFixed(6);
+        const mapUrl = `https://maps.google.com/?q=${capturedLat},${capturedLng}`;
+
+        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
+        
+        if (addressBox && !addressBox.value.includes('maps.google.com')) {
+          addressBox.value = addressBox.value.trim() 
+            ? `${addressBox.value.trim()}\n📍 GPS: ${mapUrl}`
+            : `📍 GPS: ${mapUrl}`;
+        }
+      },
+      (error) => {
+        gpsStatus.innerText = "⚠️ Location permission denied. Please enter address manually.";
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
 
   function addHorseCard() {
     horseCount++;
@@ -151,68 +197,63 @@
   } else {
     addHorseCard();
   }
+
   document.getElementById('equineForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  if (!document.getElementById('acceptTerms').checked) {
-    alert('Please accept the Terms & Conditions regarding sample handling.');
-    return;
-  }
+    if (!document.getElementById('acceptTerms').checked) {
+      alert('Please accept the Terms & Conditions regarding sample handling.');
+      return;
+    }
 
-  const submitBtn = document.getElementById('submitBtn');
-  submitBtn.innerText = "⏳ Processing Booking...";
-  submitBtn.disabled = true;
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.innerText = "⏳ Processing Booking...";
+    submitBtn.disabled = true;
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const ownerPhone = document.getElementById('ownerPhone').value.trim() || urlParams.get('phone') || '919373194945';
+    const ownerPhone = document.getElementById('ownerPhone').value.trim() || urlParams.get('phone') || '919373194945';
+    const firstHorse = document.querySelector('.horse-block');
 
-  const horses = [];
-  document.querySelectorAll('.horse-block').forEach(card => {
-    horses.push({
-      name: card.querySelector('.h-name').value || 'Horse',
-      microchip: card.querySelector('.h-chip').value || 'N/A',
-      gender: card.querySelector('.h-gender').value,
-      age: card.querySelector('.h-age').value || 'N/A',
-      breed: card.querySelector('.h-breed').value,
-      color: card.querySelector('.h-color').value || 'N/A',
-      markings: card.querySelector('.h-markings').value || 'None',
-      coggins: true,
-      glanders: true
-    });
-  });
+    const payload = {
+      owner_name: document.getElementById('ownerName').value,
+      phone: ownerPhone,
+      phone_number: ownerPhone,
+      alt_phone: document.getElementById('altPhone')?.value || '',
+      horse_name: firstHorse ? firstHorse.querySelector('.h-name').value : 'N/A',
+      microchip: firstHorse ? firstHorse.querySelector('.h-chip').value : 'N/A',
+      gender: firstHorse ? firstHorse.querySelector('.h-gender').value : 'N/A',
+      breed: firstHorse ? firstHorse.querySelector('.h-breed').value : 'N/A',
+      address: document.getElementById('address')?.value || 'N/A',
+      latitude: capturedLat,
+      longitude: capturedLng,
+      tests: ['EIA (Coggins Test)', 'Glanders (CFT)']
+    };
 
-  const payload = {
-    ownerName: document.getElementById('ownerName').value,
-    phone: ownerPhone,
-    altPhone: document.getElementById('altPhone')?.value || '',
-    acceptedTerms: true,
-    horses: horses
-  };
+    try {
+      // CORRECT ACTIVE CLOUD RUN ENDPOINT
+      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/register-equine-camp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      
+      const resData = await response.json();
 
-  try {
-    const response = await fetch('https://pvd-api-142193401500.asia-south1.run.app/register-equine-camp', {
-  method: 'POST',
-  headers: { 'Content-Type': 'text/plain' },
-  body: JSON.stringify(payload)
-});
-    const resData = await response.json();
-
-    if (response.ok && resData.success) {
-      alert('🎉 Equine Registration Successful! Pass sent to your WhatsApp.');
-      window.location.href = "https://wa.me/919373194945";
-    } else {
-      alert('Error: ' + (resData.error || 'Submission failed.'));
+      if (response.ok && resData.success) {
+        alert('🎉 Equine Registration Successful! Pass sent to your WhatsApp.');
+        window.location.href = "https://wa.me/919373194945";
+      } else {
+        alert('Error: ' + (resData.error || 'Submission failed.'));
+        submitBtn.innerText = "Submit Booking & Get Pass";
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      console.error('Fetch Error:', err);
+      alert('Connection Error: Unable to reach PVD server. Please check your internet connection.');
       submitBtn.innerText = "Submit Booking & Get Pass";
       submitBtn.disabled = false;
     }
-  } catch (err) {
-    console.error('Fetch Error:', err);
-    alert('Connection Error: Unable to reach PVD server. Please check your internet connection.');
-    submitBtn.innerText = "Submit Booking & Get Pass";
-    submitBtn.disabled = false;
-  }
-});
-  </script>
+  });
+</script>
 
 </body>
 </html>
