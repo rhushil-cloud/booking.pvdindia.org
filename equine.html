@@ -17,7 +17,10 @@
     .checkbox-group { display: flex; gap: 20px; margin-top: 8px; font-size: 13px; font-weight: bold; }
     .checkbox-item { display: flex; align-items: center; gap: 6px; }
     .checkbox-item input { width: auto; margin: 0; }
-    .terms-box { background: #fff8e7; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin-top: 16px; font-size: 12px; color: #856404; }
+    .instructions-box { background: #eef2f7; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 8px; margin-top: 16px; font-size: 12px; color: #1e293b; }
+    .instructions-box ul { margin: 6px 0 0 0; padding-left: 18px; }
+    .instructions-box li { margin-bottom: 6px; }
+    .terms-box { background: #fff8e7; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 12px; color: #856404; }
     .btn-add { background: #1A365D; color: white; border: none; padding: 11px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
     .btn-submit { background: #25D366; color: white; border: none; padding: 13px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 18px; }
     .btn-gps { background: #007bff; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
@@ -72,17 +75,29 @@
 
     <button type="button" class="btn-add" onclick="addHorseCard()">+ Add Another Horse</button>
 
+    <!-- Sample Guidelines, Package & Charges -->
+    <div class="instructions-box">
+      <strong>📋 Important Sample, Packaging & Testing Guidelines:</strong>
+      <ul>
+        <li><strong>Sample Type:</strong> Serum sample required for testing.</li>
+        <li><strong>Labeling:</strong> Proper labeling / writing the name of the Horse on each sample tube is <strong>mandatory</strong>.</li>
+        <li><strong>Packaging & Storage:</strong> The sample should be in a <strong>ziplock bag</strong>, inside a <strong>thermocol box with an ice pack</strong>.</li>
+        <li><strong>Pickup Confirmation:</strong> Before sample withdrawal, please confirm sample pickup arrangements.</li>
+        <li><strong>Charges:</strong> ₹1,650/- testing charges applicable per sample.</li>
+      </ul>
+    </div>
+
     <!-- Consent and T&C -->
     <div class="terms-box">
       <div style="display: flex; gap: 8px; align-items: flex-start;">
         <input type="checkbox" id="acceptTerms" required style="width: auto; margin-top: 3px;">
         <label for="acceptTerms" style="margin-top: 0; font-weight: normal; font-size: 12px; color: #333;">
-          I agree & accept the <strong>Terms & Conditions</strong> regarding mandatory sample handling, diagnostic procedures, and liability waiver for sample handling/damages.
+          I agree & accept the <strong>Terms & Conditions</strong> regarding mandatory sample handling, packaging in ziplock/thermocol box, diagnostic procedures, and liability waiver for sample handling/damages.
         </label>
       </div>
     </div>
 
-    <button type="submit" id="submitBtn" class="btn-submit">Submit Booking & Get Pass</button>
+    <button type="submit" id="submitBtn" class="btn-submit">Test Booking Request</button>
   </form>
 </div>
 
@@ -203,17 +218,17 @@
     e.preventDefault();
 
     if (!document.getElementById('acceptTerms').checked) {
-      alert('Please accept the Terms & Conditions regarding sample handling.');
+      alert('Please accept the Terms & Conditions regarding sample handling and packaging.');
       return;
     }
 
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerText = "⏳ Processing Booking...";
+    submitBtn.innerText = "⏳ Processing Request...";
     submitBtn.disabled = true;
 
+    const ownerName = document.getElementById('ownerName').value;
     const ownerPhone = document.getElementById('ownerPhone').value.trim() || urlParams.get('phone') || '919373194945';
 
-    // Extract all horse cards into an array
     const horses = [];
     document.querySelectorAll('.horse-block').forEach((card, idx) => {
       horses.push({
@@ -228,7 +243,7 @@
     });
 
     const payload = {
-      owner_name: document.getElementById('ownerName').value,
+      owner_name: ownerName,
       phone: ownerPhone,
       phone_number: ownerPhone,
       alt_phone: document.getElementById('altPhone')?.value || 'N/A',
@@ -249,17 +264,28 @@
       const resData = await response.json();
 
       if (response.ok && resData.success) {
-        alert(`🎉 Equine Registration Successful!\n\nRegistered ${horses.length} Horse(s).\nPass sent to your WhatsApp.`);
+        alert(
+          `🎉 Booking Request Successful!\n\n` +
+          `Pass ID: ${resData.passId}\n` +
+          `Registered ${horses.length} Horse(s).\n\n` +
+          `📌 IMPORTANT REMINDERS:\n` +
+          `• Serum sample required (₹1,650/- per sample)\n` +
+          `• Label horse name on each tube\n` +
+          `• Pack in ziplock bag inside a thermocol box with ice pack\n` +
+          `• Confirm pickup arrangements before sample withdrawal\n\n` +
+          `Full instructions and pass details have been sent to your WhatsApp!`
+        );
+
         window.location.href = "https://wa.me/919373194945";
       } else {
         alert('Error: ' + (resData.error || 'Submission failed.'));
-        submitBtn.innerText = "Submit Booking & Get Pass";
+        submitBtn.innerText = "Test Booking Request";
         submitBtn.disabled = false;
       }
     } catch (err) {
       console.error('Fetch Error:', err);
       alert('Connection Error: Unable to reach PVD server. Please check your internet connection.');
-      submitBtn.innerText = "Submit Booking & Get Pass";
+      submitBtn.innerText = "Test Booking Request";
       submitBtn.disabled = false;
     }
   });
