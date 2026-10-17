@@ -50,7 +50,7 @@
     <div class="row">
       <div>
         <label>WhatsApp Number *</label>
-        <input type="tel" id="ownerPhone" required placeholder="e.g. 919373194945">
+        <input type="tel" id="ownerPhone" required placeholder="e.g. 919921272285">
       </div>
       <div>
         <label>Alt Phone Number</label>
@@ -126,7 +126,7 @@
         capturedLng = position.coords.longitude.toFixed(6);
         const mapUrl = `https://maps.google.com/?q=${capturedLat},${capturedLng}`;
 
-        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
+        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat},${capturedLng})`;
         
         if (addressBox && !addressBox.value.includes('maps.google.com')) {
           addressBox.value = addressBox.value.trim() 
@@ -197,99 +197,3 @@
       <div class="section-title">🩺 Mandatory Medical Tests</div>
       <div class="checkbox-group">
         <div class="checkbox-item"><input type="checkbox" class="t-coggins" checked disabled> EIA (Coggins Test)</div>
-        <div class="checkbox-item"><input type="checkbox" class="t-glanders" checked disabled> Glanders (CFT)</div>
-      </div>
-    `;
-    document.getElementById('horseList').appendChild(div);
-  }
-
-  function removeHorse(id) {
-    const el = document.getElementById(`horse_${id}`);
-    if (el) el.remove();
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', addHorseCard);
-  } else {
-    addHorseCard();
-  }
-
-  document.getElementById('equineForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    if (!document.getElementById('acceptTerms').checked) {
-      alert('Please accept the Terms & Conditions regarding sample handling and packaging.');
-      return;
-    }
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerText = "⏳ Processing Request...";
-    submitBtn.disabled = true;
-
-    const ownerName = document.getElementById('ownerName').value;
-    const ownerPhone = document.getElementById('ownerPhone').value.trim() || urlParams.get('phone') || '919373194945';
-
-    const horses = [];
-    document.querySelectorAll('.horse-block').forEach((card, idx) => {
-      horses.push({
-        horse_name: card.querySelector('.h-name')?.value || `Horse #${idx + 1}`,
-        microchip: card.querySelector('.h-chip')?.value || 'N/A',
-        gender: card.querySelector('.h-gender')?.value || 'N/A',
-        age: card.querySelector('.h-age')?.value || 'N/A',
-        breed: card.querySelector('.h-breed')?.value || 'N/A',
-        color: card.querySelector('.h-color')?.value || 'N/A',
-        markings: card.querySelector('.h-markings')?.value || 'N/A'
-      });
-    });
-
-    const payload = {
-      owner_name: ownerName,
-      phone: ownerPhone,
-      phone_number: ownerPhone,
-      alt_phone: document.getElementById('altPhone')?.value || 'N/A',
-      address: document.getElementById('address')?.value || 'N/A',
-      latitude: capturedLat || '',
-      longitude: capturedLng || '',
-      horses: horses,
-      tests: ['EIA (Coggins Test)', 'Glanders (CFT)']
-    };
-
-    try {
-      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/register-equine-camp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      
-      const resData = await response.json();
-
-      if (response.ok && resData.success) {
-        alert(
-          `🎉 Booking Request Successful!\n\n` +
-          `Pass ID: ${resData.passId}\n` +
-          `Registered ${horses.length} Horse(s).\n\n` +
-          `📌 IMPORTANT REMINDERS:\n` +
-          `• Serum sample required (₹1,650/- per sample)\n` +
-          `• Label horse name on each tube\n` +
-          `• Pack in ziplock bag inside a thermocol box with ice pack\n` +
-          `• Confirm pickup arrangements before sample withdrawal\n\n` +
-          `Full instructions and pass details have been sent to your WhatsApp!`
-        );
-
-        window.location.href = "https://wa.me/919373194945";
-      } else {
-        alert('Error: ' + (resData.error || 'Submission failed.'));
-        submitBtn.innerText = "Test Booking Request";
-        submitBtn.disabled = false;
-      }
-    } catch (err) {
-      console.error('Fetch Error:', err);
-      alert('Connection Error: Unable to reach PVD server. Please check your internet connection.');
-      submitBtn.innerText = "Test Booking Request";
-      submitBtn.disabled = false;
-    }
-  });
-</script>
-
-</body>
-</html>
