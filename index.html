@@ -109,7 +109,7 @@
       </div>
     </div>
 
-    <button type="button" id="submitBtn" class="btn" onclick="submitBookingLead()">Request Sample Visit</button>
+    <button type="submit" id="submitBtn" class="btn">Request Sample Visit</button>
   </form>
 </div>
 
@@ -120,9 +120,65 @@
   let capturedLat = "";
   let capturedLng = "";
 
+  const dictionary = {
+    en: {
+      titleText: "PVD India Diagnostics",
+      subtitleText: "Doorstep Sample Collection Request",
+      lblCustomerName: "1. Customer Name *",
+      lblRole: "Role *",
+      lblAnimalType: "Animal Type *",
+      lblTag: "Tag / Microchip / Pet Name (Optional)",
+      lblTests: "2. Required Sample / Test Types *",
+      lblAddress: "3. Schedule Pickup Location *",
+      gpsBtnText: "Capture Live GPS Location (Google Maps)",
+      lblDate: "Preferred Date *",
+      lblSlot: "Time Slot *",
+      submitBtn: "Request Sample Visit"
+    },
+    mr: {
+      titleText: "पीव्हीडी इंडिया डायग्नोस्टिक्स",
+      subtitleText: "घरापर्यंत सॅम्पल कलेक्शनची विनंती",
+      lblCustomerName: "१. ग्राहकाचे नाव *",
+      lblRole: "भूमिका *",
+      lblAnimalType: "प्राण्याचा प्रकार *",
+      lblTag: "टॅग / मायक्रोचिप / नाव (पर्यायी)",
+      lblTests: "२. आवश्यक चाचण्यांचा प्रकार *",
+      lblAddress: "३. सॅम्पल पिकअपचा पत्ता *",
+      gpsBtnText: "थेट GPS लोकेशन मिळवा (गूगल मॅप्स)",
+      lblDate: "पसंतीची तारीख *",
+      lblSlot: "वेळेची स्लॉट *",
+      submitBtn: "सॅम्पल कलेक्शन बुक करा"
+    },
+    hi: {
+      titleText: "पीवीडी इंडिया डायग्नोस्टिक्स",
+      subtitleText: "डोरस्टेप सैंपल कलेक्शन अनुरोध",
+      lblCustomerName: "१. ग्राहक का नाम *",
+      lblRole: "भूमिका *",
+      lblAnimalType: "पशु का प्रकार *",
+      lblTag: "टैग / माइक्रोचिप / नाम (वैकल्पिक)",
+      lblTests: "२. आवश्यक जांच के प्रकार *",
+      lblAddress: "३. सैंपल पिकअप स्थान *",
+      gpsBtnText: "लाइव GPS स्थान प्राप्त करें (गूगल मैप्स)",
+      lblDate: "पसंदीदा तारीख *",
+      lblSlot: "समय स्लॉट *",
+      submitBtn: "सैंपल विजिट अनुरोध करें"
+    }
+  };
+
   function switchLanguage(lang) {
-    console.log("Switched language to:", lang);
-    // Placeholder for multilingual label dictionary
+    const t = dictionary[lang] || dictionary.en;
+    for (let key in t) {
+      const el = document.getElementById(key);
+      if (el) {
+        if (el.tagName === 'INPUT' && el.type === 'submit') {
+          el.value = t[key];
+        } else if (el.tagName === 'BUTTON') {
+          el.innerText = t[key];
+        } else {
+          el.innerText = t[key];
+        }
+      }
+    }
   }
 
   function captureGPSLocation() {
@@ -142,129 +198,8 @@
         capturedLng = position.coords.longitude.toFixed(6);
         const mapUrl = `https://maps.google.com/?q=${capturedLat},${capturedLng}`;
 
-        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
+        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat},${capturedLng})`;
         
         if (!addressBox.value.includes('maps.google.com')) {
           addressBox.value = addressBox.value.trim() 
-            ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl}`
-            : `📍 GPS Location: ${mapUrl}`;
-        }
-      },
-      (error) => {
-        console.error("GPS Error:", error);
-        gpsStatus.innerText = "⚠️ Location permission denied. Please enter address manually.";
-      },
-      { enableHighAccuracy: true, timeout: 10000 }
-    );
-  }
-
-  function toggleOtherInput(selectId, containerId) {
-    const val = document.getElementById(selectId).value;
-    const container = document.getElementById(containerId);
-    container.style.display = (val === 'Other') ? 'block' : 'none';
-  }
-
-  function toggleTestOtherInput() {
-    const chk = document.getElementById('chkOtherTest');
-    const container = document.getElementById('test_other_container');
-    container.style.display = chk.checked ? 'block' : 'none';
-  }
-
-  async function submitBookingLead() {
-    const nameInput = document.getElementById('customer_name');
-    const addressInput = document.getElementById('address');
-    
-    const name = nameInput ? nameInput.value.trim() : '';
-    const address = addressInput ? addressInput.value.trim() : '';
-
-    if (!name || !address) {
-      alert("Please fill in Customer Name and Pickup Address.");
-      return;
-    }
-
-    let role = document.getElementById('user_role').value;
-    if (role === 'Other') {
-      role = document.getElementById('role_other_text').value.trim() || 'Other';
-    }
-
-    let animal = document.getElementById('animal_type').value;
-    if (animal === 'Other') {
-      animal = document.getElementById('animal_other_text').value.trim() || 'Other';
-    }
-
-    const cowId = document.getElementById('cow_id').value.trim() || 'N/A';
-    const visitDate = document.getElementById('visit_date').value;
-    const visitSlot = document.getElementById('visit_slot').value;
-
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
-    let selectedCategories = Array.from(checkboxes).map(cb => cb.value);
-
-    if (document.getElementById('chkOtherTest') && document.getElementById('chkOtherTest').checked) {
-      const customTestName = document.getElementById('test_other_text').value.trim();
-      selectedCategories = selectedCategories.filter(item => item !== 'Other');
-      selectedCategories.push(customTestName ? `Custom Test: ${customTestName}` : 'Custom Diagnostic Request');
-    }
-
-    if (selectedCategories.length === 0) {
-      alert("Please select at least one required test type.");
-      return;
-    }
-
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "⏳ Submitting...";
-
-    const urlParams = new URLSearchParams(window.location.search);
-    const farmerPhone = urlParams.get('phone') || urlParams.get('bsuid') || '919373194945';
-
-    const payload = {
-      customer_name: name,
-      farmerName: name,
-      phone_number: farmerPhone,
-      phone: farmerPhone,
-      user_role: role,
-      animal_type: animal,
-      animalType: animal,
-      cow_id: cowId,
-      tagNo: cowId,
-      selected_test_ids: selectedCategories,
-      testTypes: selectedCategories,
-      address: address,
-      pincode: '412307',
-      visit_date: visitDate,
-      preferredDate: visitDate,
-      visit_slot: visitSlot,
-      preferredTimeSlot: visitSlot,
-      latitude: capturedLat || '',
-      longitude: capturedLng || '',
-      bsuid: farmerPhone
-    };
-
-    try {
-      // FIXED ENDPOINT URL (Transposed Digits Corrected)
-      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/book-slot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        const refId = data.orderId || data.bookingId || "Confirmed";
-        alert("🎉 Request Submitted!\n\nBooking ID: " + refId + "\n\nConfirmation sent to your WhatsApp!");
-        window.location.href = "https://wa.me/919373194945";
-      } else {
-        alert("⚠️ Notice: " + (data.error || "Unable to submit booking."));
-      }
-    } catch (err) {
-      console.error("Submission Error:", err);
-      alert("Connection Error: Unable to reach PVD server. Please check your internet connection.");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.innerText = "Request Sample Visit";
-    }
-  }
-</script>
-</body>
-</html>
+            ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl
