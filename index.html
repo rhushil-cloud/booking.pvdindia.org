@@ -198,8 +198,137 @@
         capturedLng = position.coords.longitude.toFixed(6);
         const mapUrl = `https://maps.google.com/?q=${capturedLat},${capturedLng}`;
 
-        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat},${capturedLng})`;
+        gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
         
         if (!addressBox.value.includes('maps.google.com')) {
           addressBox.value = addressBox.value.trim() 
-            ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl
+            ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl}`
+            : `📍 GPS Location: ${mapUrl}`;
+        }
+      },
+      (error) => {
+        console.error("GPS Error:", error);
+        gpsStatus.innerText = "⚠️ Location permission denied. Please enter address manually.";
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  }
+
+  function toggleOtherInput(selectId, containerId) {
+    const val = document.getElementById(selectId).value;
+    const container = document.getElementById(containerId);
+    container.style.display = (val === 'Other') ? 'block' : 'none';
+  }
+
+  function toggleTestOtherInput() {
+    const chk = document.getElementById('chkOtherTest');
+    const container = document.getElementById('test_other_container');
+    container.style.display = chk.checked ? 'block' : 'none';
+  }
+
+  function redirectToWhatsApp(targetPhone) {
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = `whatsapp://send?phone=${targetPhone}`;
+      setTimeout(() => {
+        window.location.href = `https://wa.me/${targetPhone}`;
+      }, 1200);
+    } else {
+      window.location.href = `https://wa.me/${targetPhone}`;
+    }
+  }
+
+  document.getElementById('pvdBookingForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const nameInput = document.getElementById('customer_name');
+    const addressInput = document.getElementById('address');
+    
+    const name = nameInput ? nameInput.value.trim() : '';
+    const address = addressInput ? addressInput.value.trim() : '';
+
+    let role = document.getElementById('user_role').value;
+    if (role === 'Other') {
+      role = document.getElementById('role_other_text').value.trim() || 'Other';
+    }
+
+    let animal = document.getElementById('animal_type').value;
+    if (animal === 'Other') {
+      animal = document.getElementById('animal_other_text').value.trim() || 'Other';
+    }
+
+    const cowId = document.getElementById('cow_id').value.trim() || 'N/A';
+    const visitDate = document.getElementById('visit_date').value;
+    const visitSlot = document.getElementById('visit_slot').value;
+
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    let selectedCategories = Array.from(checkboxes).map(cb => cb.value);
+
+    if (document.getElementById('chkOtherTest') && document.getElementById('chkOtherTest').checked) {
+      const customTestName = document.getElementById('test_other_text').value.trim();
+      selectedCategories = selectedCategories.filter(item => item !== 'Other');
+      selectedCategories.push(customTestName ? `Custom Test: ${customTestName}` : 'Custom Diagnostic Request');
+    }
+
+    if (selectedCategories.length === 0) {
+      alert("Please select at least one required test type.");
+      return;
+    }
+
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "⏳ Submitting...";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const farmerPhone = urlParams.get('phone') || urlParams.get('bsuid') || '919921272285';
+
+    const payload = {
+      customer_name: name,
+      farmerName: name,
+      phone_number: farmerPhone,
+      phone: farmerPhone,
+      user_role: role,
+      animal_type: animal,
+      animalType: animal,
+      cow_id: cowId,
+      tagNo: cowId,
+      selected_test_ids: selectedCategories,
+      testTypes: selectedCategories,
+      address: address,
+      pincode: '412307',
+      visit_date: visitDate,
+      preferredDate: visitDate,
+      visit_slot: visitSlot,
+      preferredTimeSlot: visitSlot,
+      latitude: capturedLat || '',
+      longitude: capturedLng || '',
+      bsuid: farmerPhone
+    };
+
+    try {
+      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/book-slot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        const refId = data.orderId || data.bookingId || "Confirmed";
+        alert("🎉 Request Submitted!\n\nBooking ID: " + refId + "\n\nRedirecting back to WhatsApp...");
+        redirectToWhatsApp("919921272285");
+      } else {
+        alert("⚠️ Notice: " + (data.error || "Unable to submit booking."));
+      }
+    } catch (err) {
+      console.error("Submission Error:", err);
+      alert("Connection Error: Unable to reach PVD server. Please check your internet connection.");
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerText = "Request Sample Visit";
+    }
+  });
+</script>
+</body>
+</html>
