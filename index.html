@@ -3,118 +3,183 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Japalouppe Winter Show 2026 - Horse: Coggins and Glanders Test Booking</title>
+  <title>PVD India Diagnostics - Request Sample Visit</title>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f4f7f6; margin: 0; padding: 16px; }
-    .card { max-width: 550px; margin: auto; background: white; padding: 22px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    h2 { color: #128C7E; margin-top: 0; text-align: center; font-size: 22px; }
-    .subtitle { text-align: center; font-size: 14px; color: #1A365D; font-weight: bold; margin-bottom: 12px; }
-    .event-info { background: #eef7f6; border-left: 4px solid #128C7E; padding: 10px 12px; font-size: 12px; color: #333; margin-bottom: 16px; border-radius: 4px; }
-    .horse-block { background: #f9fbfb; border: 1px solid #dbe8e5; padding: 16px; border-radius: 10px; margin-bottom: 16px; position: relative; }
-    .section-title { font-size: 14px; color: #1A365D; border-bottom: 1px solid #e0ece9; padding-bottom: 4px; margin-top: 12px; margin-bottom: 8px; font-weight: bold; }
-    label { font-size: 13px; font-weight: bold; color: #333; display: block; margin-top: 8px; }
-    input, select, textarea { width: 100%; padding: 9px; margin-top: 4px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
-    .checkbox-group { display: flex; gap: 20px; margin-top: 8px; font-size: 13px; font-weight: bold; }
-    .checkbox-item { display: flex; align-items: center; gap: 6px; }
-    .checkbox-item input { width: auto; margin: 0; }
-    .instructions-box { background: #eef2f7; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 8px; margin-top: 16px; font-size: 12px; color: #1e293b; }
-    .instructions-box ul { margin: 6px 0 0 0; padding-left: 18px; }
-    .instructions-box li { margin-bottom: 6px; }
-    .terms-box { background: #fff8e7; border: 1px solid #ffeeba; padding: 12px; border-radius: 8px; margin-top: 12px; font-size: 12px; color: #856404; }
-    .btn-add { background: #1A365D; color: white; border: none; padding: 11px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; }
-    .btn-submit { background: #25D366; color: white; border: none; padding: 13px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 18px; }
-    .btn-gps { background: #007bff; color: white; border: none; padding: 10px; width: 100%; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 8px; font-size: 13px; }
-    .remove-btn { position: absolute; top: 12px; right: 12px; color: #d9534f; border: none; background: none; font-weight: bold; cursor: pointer; font-size: 13px; }
-    .row { display: flex; gap: 10px; }
-    .row > div { flex: 1; }
-    .status-msg { font-size: 12px; font-weight: bold; margin-top: 4px; color: #128C7E; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+    .card { max-width: 480px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+    .header { background: #056543; color: white; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; position: relative; }
+    .lang-switcher { position: absolute; top: 12px; right: 12px; }
+    .lang-switcher select { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
+    label { font-weight: bold; font-size: 14px; color: #333; display: block; margin-top: 15px; margin-bottom: 5px; }
+    input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+    .btn { width: 100%; padding: 14px; background: #056543; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 16px; margin-top: 20px; cursor: pointer; }
+    .btn:disabled { background: #88a89c; }
+    .gps-btn { width: 100%; padding: 10px; background: #1a365d; color: white; border: none; border-radius: 6px; font-weight: bold; font-size: 13px; margin-top: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+    .checkbox-item { display: flex; align-items: center; gap: 10px; font-weight: normal; font-size: 14px; }
+    .checkbox-item input { width: auto; }
+    .hidden-field { display: none; margin-top: 8px; }
+    .status-msg { font-size: 12px; color: #2b6cb0; margin-top: 4px; font-weight: 500; }
   </style>
 </head>
 <body>
 
 <div class="card">
-  <h2>Japalouppe Winter Show 2026</h2>
-  <div class="subtitle">Horse: Coggins and Glanders Test Booking</div>
-
-  <div class="event-info">
-    📍 <strong>Event:</strong> Japalouppe Winter Show 2026<br>
-    📅 <strong>Event Dates:</strong> 27th, 28th, 29th November 2026<br>
-    ⚠️ Mandatory diagnostic screening prior to horse entry & transport.
+  <div class="header">
+    <div class="lang-switcher">
+      <select id="languageSelect" onchange="switchLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="mr">मराठी</option>
+        <option value="hi">हिंदी</option>
+      </select>
+    </div>
+    <h2 id="titleText" style="margin:0; font-size: 18px;">PVD India Diagnostics</h2>
+    <p id="subtitleText" style="margin:5px 0 0 0; font-size: 12px; opacity:0.9;">Doorstep Sample Collection Request</p>
   </div>
 
-  <form id="equineForm">
-    <div class="section-title">📇 Owner / Stud Farm Details</div>
-    <label>Owner / Stud Farm Name *</label>
-    <input type="text" id="ownerName" required placeholder="e.g. Royal Turf Club / Raj">
+  <form id="pvdBookingForm">
+    <label id="lblCustomerName">1. Customer Name *</label>
+    <input type="text" id="customer_name" placeholder="Enter Full Name" required>
 
-    <div class="row">
-      <div>
-        <label>WhatsApp Number *</label>
-        <input type="tel" id="ownerPhone" required placeholder="e.g. 919921272285">
+    <div style="display:flex; gap:10px;">
+      <div style="flex:1;">
+        <label id="lblRole">Role *</label>
+        <select id="user_role" onchange="toggleOtherInput('user_role', 'role_other_container')" required>
+          <option value="Farmer" id="optFarmer">Farmer</option>
+          <option value="Veterinarian" id="optVet">Veterinarian</option>
+          <option value="Pet Owner" id="optPetOwner">Pet Owner</option>
+          <option value="Other" id="optRoleOther">Other</option>
+        </select>
+        <div id="role_other_container" class="hidden-field">
+          <input type="text" id="role_other_text" placeholder="Specify Your Role">
+        </div>
       </div>
-      <div>
-        <label>Alt Phone Number</label>
-        <input type="tel" id="altPhone" placeholder="e.g. 9822012345">
+
+      <div style="flex:1;">
+        <label id="lblAnimalType">Animal Type *</label>
+        <select id="animal_type" onchange="toggleOtherInput('animal_type', 'animal_other_container')" required>
+          <option value="Cattle (Cow/Buffalo)" id="optCattle">Cattle (Cow/Buffalo)</option>
+          <option value="Pet (Dog/Cat)" id="optPet">Pet (Dog/Cat)</option>
+          <option value="Goat/Sheep" id="optGoat">Goat/Sheep</option>
+          <option value="Other" id="optAnimalOther">Other</option>
+        </select>
+        <div id="animal_other_container" class="hidden-field">
+          <input type="text" id="animal_other_text" placeholder="Specify Animal Name">
+        </div>
       </div>
     </div>
 
-    <!-- GPS Location Capture Section -->
-    <div class="section-title">📍 Stable / Pickup Location</div>
-    <label>Pickup Address / Stable Location *</label>
-    <textarea id="address" rows="2" placeholder="Enter stable address / landmark" required></textarea>
+    <label id="lblTag">Tag / Microchip / Pet Name (Optional)</label>
+    <input type="text" id="cow_id" placeholder="e.g. Bruno / Tag #48291">
+
+    <label id="lblTests">2. Required Sample / Test Types *</label>
+    <div class="checkbox-group">
+      <label class="checkbox-item"><input type="checkbox" value="Udder Milk Culture & Sensitivity"> <span id="t1">Udder Milk Culture & Sensitivity</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="Complete Blood & Metabolic Profile"> <span id="t2">Complete Blood & Metabolic Profile</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="Bovine Fertility & Hormonal Panel"> <span id="t3">Bovine Fertility & Hormonal Panel</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="Fecal Parasitic & Dung Analysis"> <span id="t4">Fecal Parasitic & Dung Analysis</span></label>
+      <label class="checkbox-item"><input type="checkbox" value="RT-PCR Screening for Viral Pathogens"> <span id="t5">RT-PCR Screening for Viral Pathogens</span></label>
+      <label class="checkbox-item"><input type="checkbox" id="chkOtherTest" value="Other" onchange="toggleTestOtherInput()"> <span id="tOther">Other / Custom Test</span></label>
+    </div>
+    <div id="test_other_container" class="hidden-field">
+      <input type="text" id="test_other_text" placeholder="Specify required test name or symptoms">
+    </div>
+
+    <label id="lblAddress">3. Schedule Pickup Location *</label>
+    <textarea id="address" rows="3" placeholder="Village / Landmark / House No" required></textarea>
     
-    <button type="button" class="btn-gps" onclick="captureGPSLocation()">
-      📍 Capture Live GPS Location (Google Maps)
+    <!-- GPS LOCATION PICKER -->
+    <button type="button" class="gps-btn" onclick="captureGPSLocation()">
+      <span>📍</span> <span id="gpsBtnText">Capture Live GPS Location (Google Maps)</span>
     </button>
     <div id="gpsStatus" class="status-msg"></div>
 
-    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
-
-    <!-- Dynamic Horse Profiles -->
-    <div id="horseList"></div>
-
-    <button type="button" class="btn-add" onclick="addHorseCard()">+ Add Another Horse</button>
-
-    <!-- Sample Guidelines, Package & Charges -->
-    <div class="instructions-box">
-      <strong>📋 Important Sample, Packaging & Testing Guidelines:</strong>
-      <ul>
-        <li><strong>Sample Type:</strong> Serum sample required for testing.</li>
-        <li><strong>Labeling:</strong> Proper labeling / writing the name of the Horse on each sample tube is <strong>mandatory</strong>.</li>
-        <li><strong>Packaging & Storage:</strong> The sample should be in a <strong>ziplock bag</strong>, inside a <strong>thermocol box with an ice pack</strong>.</li>
-        <li><strong>Pickup Confirmation:</strong> Before sample withdrawal, please confirm sample pickup arrangements.</li>
-        <li><strong>Charges:</strong> ₹1,650/- testing charges applicable per sample.</li>
-      </ul>
-    </div>
-
-    <!-- Consent and T&C -->
-    <div class="terms-box">
-      <div style="display: flex; gap: 8px; align-items: flex-start;">
-        <input type="checkbox" id="acceptTerms" required style="width: auto; margin-top: 3px;">
-        <label for="acceptTerms" style="margin-top: 0; font-weight: normal; font-size: 12px; color: #333;">
-          I agree & accept the <strong>Terms & Conditions</strong> regarding mandatory sample handling, packaging in ziplock/thermocol box, diagnostic procedures, and liability waiver for sample handling/damages.
-        </label>
+    <div style="display:flex; gap:10px;">
+      <div style="flex:1;">
+        <label id="lblDate">Preferred Date *</label>
+        <input type="date" id="visit_date" required>
+      </div>
+      <div style="flex:1;">
+        <label id="lblSlot">Time Slot *</label>
+        <select id="visit_slot" required>
+          <option value="Morning (9am - 12pm)" id="slot1">Morning (9am - 12pm)</option>
+          <option value="Afternoon (12pm - 4pm)" id="slot2">Afternoon (12pm - 4pm)</option>
+          <option value="Evening (4pm - 7pm)" id="slot3">Evening (4pm - 7pm)</option>
+        </select>
       </div>
     </div>
 
-    <button type="submit" id="submitBtn" class="btn-submit">Test Booking Request</button>
+    <button type="submit" id="submitBtn" class="btn">Request Sample Visit</button>
   </form>
 </div>
 
 <script>
-  let horseCount = 0;
+  // Default visit date to today
+  document.getElementById('visit_date').valueAsDate = new Date();
+
   let capturedLat = "";
   let capturedLng = "";
 
-  window.addEventListener('DOMContentLoaded', () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const phoneParam = urlParams.get('phone') || '';
-    if (phoneParam) {
-      document.getElementById('ownerPhone').value = phoneParam;
+  const dictionary = {
+    en: {
+      titleText: "PVD India Diagnostics",
+      subtitleText: "Doorstep Sample Collection Request",
+      lblCustomerName: "1. Customer Name *",
+      lblRole: "Role *",
+      lblAnimalType: "Animal Type *",
+      lblTag: "Tag / Microchip / Pet Name (Optional)",
+      lblTests: "2. Required Sample / Test Types *",
+      lblAddress: "3. Schedule Pickup Location *",
+      gpsBtnText: "Capture Live GPS Location (Google Maps)",
+      lblDate: "Preferred Date *",
+      lblSlot: "Time Slot *",
+      submitBtn: "Request Sample Visit"
+    },
+    mr: {
+      titleText: "पीव्हीडी इंडिया डायग्नोस्टिक्स",
+      subtitleText: "घरापर्यंत सॅम्पल कलेक्शनची विनंती",
+      lblCustomerName: "१. ग्राहकाचे नाव *",
+      lblRole: "भूमिका *",
+      lblAnimalType: "प्राण्याचा प्रकार *",
+      lblTag: "टॅग / मायक्रोचिप / नाव (पर्यायी)",
+      lblTests: "२. आवश्यक चाचण्यांचा प्रकार *",
+      lblAddress: "३. सॅम्पल पिकअपचा पत्ता *",
+      gpsBtnText: "थेट GPS लोकेशन मिळवा (गूगल मॅप्स)",
+      lblDate: "पसंतीची तारीख *",
+      lblSlot: "वेळेची स्लॉट *",
+      submitBtn: "सॅम्पल कलेक्शन बुक करा"
+    },
+    hi: {
+      titleText: "पीवीडी इंडिया डायग्नोस्टिक्स",
+      subtitleText: "डोरस्टेप सैंपल कलेक्शन अनुरोध",
+      lblCustomerName: "१. ग्राहक का नाम *",
+      lblRole: "भूमिका *",
+      lblAnimalType: "पशु का प्रकार *",
+      lblTag: "टैग / माइक्रोचिप / नाम (वैकल्पिक)",
+      lblTests: "२. आवश्यक जांच के प्रकार *",
+      lblAddress: "३. सैंपल पिकअप स्थान *",
+      gpsBtnText: "लाइव GPS स्थान प्राप्त करें (गूगल मैप्स)",
+      lblDate: "पसंदीदा तारीख *",
+      lblSlot: "समय स्लॉट *",
+      submitBtn: "सैंपल विजिट अनुरोध करें"
     }
-    // Force initial Horse #1 card creation on page load
-    addHorseCard();
-  });
+  };
+
+  function switchLanguage(lang) {
+    const t = dictionary[lang] || dictionary.en;
+    for (let key in t) {
+      const el = document.getElementById(key);
+      if (el) {
+        if (el.tagName === 'INPUT' && el.type === 'submit') {
+          el.value = t[key];
+        } else if (el.tagName === 'BUTTON') {
+          el.innerText = t[key];
+        } else {
+          el.innerText = t[key];
+        }
+      }
+    }
+  }
 
   function captureGPSLocation() {
     const gpsStatus = document.getElementById('gpsStatus');
@@ -135,87 +200,30 @@
 
         gpsStatus.innerText = `✅ GPS Coordinates Captured (${capturedLat}, ${capturedLng})`;
         
-        if (addressBox && !addressBox.value.includes('maps.google.com')) {
+        if (!addressBox.value.includes('maps.google.com')) {
           addressBox.value = addressBox.value.trim() 
-            ? `${addressBox.value.trim()}\n📍 GPS: ${mapUrl}`
-            : `📍 GPS: ${mapUrl}`;
+            ? `${addressBox.value.trim()}\n\n📍 GPS Location: ${mapUrl}`
+            : `📍 GPS Location: ${mapUrl}`;
         }
       },
       (error) => {
+        console.error("GPS Error:", error);
         gpsStatus.innerText = "⚠️ Location permission denied. Please enter address manually.";
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
   }
 
-  function addHorseCard() {
-    const horseList = document.getElementById('horseList');
-    if (!horseList) return;
-
-    horseCount++;
-    const div = document.createElement('div');
-    div.className = 'horse-block';
-    div.id = `horse_${horseCount}`;
-    div.innerHTML = `
-      ${horseCount > 1 ? `<button type="button" class="remove-btn" onclick="removeHorse(${horseCount})">✖ Remove</button>` : ''}
-      <div style="font-weight: bold; color: #128C7E; font-size: 15px;">Horse #${horseCount} Profile</div>
-
-      <div class="section-title">📇 Basic Details</div>
-      <label>Horse Name *</label>
-      <input type="text" class="h-name" required placeholder="e.g. Rani">
-
-      <label>Microchip / Passport ID / Tag</label>
-      <input type="text" class="h-chip" placeholder="e.g. 224455">
-
-      <div class="row">
-        <div>
-          <label>Gender *</label>
-          <select class="h-gender" required>
-            <option value="Mare" selected>Mare</option>
-            <option value="Stallion">Stallion</option>
-            <option value="Gelding">Gelding</option>
-          </select>
-        </div>
-        <div>
-          <label>Age / Date of Birth</label>
-          <input type="text" class="h-age" placeholder="e.g. 4 Years">
-        </div>
-      </div>
-
-      <div class="section-title">🧬 Breed & Appearance</div>
-      <div class="row">
-        <div>
-          <label>Breed</label>
-          <select class="h-breed">
-            <option value="Marwari">Marwari</option>
-            <option value="Kathiawari">Kathiawari</option>
-            <option value="Nukra">Nukra</option>
-            <option value="Indian Half-Bred" selected>Indian Half-Bred</option>
-            <option value="Thoroughbred">Thoroughbred</option>
-            <option value="Other">Other</option>
-          </select>
-        </div>
-        <div>
-          <label>Coat Colour</label>
-          <input type="text" class="h-color" placeholder="e.g. Bay / Grey">
-        </div>
-      </div>
-
-      <label>Distinguishing Markings</label>
-      <input type="text" class="h-markings" placeholder="e.g. White blaze on face">
-
-      <div class="section-title">🩺 Mandatory Medical Tests</div>
-      <div class="checkbox-group">
-        <div class="checkbox-item"><input type="checkbox" class="t-coggins" checked disabled> EIA (Coggins Test)</div>
-        <div class="checkbox-item"><input type="checkbox" class="t-glanders" checked disabled> Glanders (CFT)</div>
-      </div>
-    `;
-    horseList.appendChild(div);
+  function toggleOtherInput(selectId, containerId) {
+    const val = document.getElementById(selectId).value;
+    const container = document.getElementById(containerId);
+    container.style.display = (val === 'Other') ? 'block' : 'none';
   }
 
-  function removeHorse(id) {
-    const el = document.getElementById(`horse_${id}`);
-    if (el) el.remove();
+  function toggleTestOtherInput() {
+    const chk = document.getElementById('chkOtherTest');
+    const container = document.getElementById('test_other_container');
+    container.style.display = chk.checked ? 'block' : 'none';
   }
 
   function redirectToWhatsApp(targetPhone) {
@@ -230,84 +238,97 @@
     }
   }
 
-  document.getElementById('equineForm').addEventListener('submit', async (e) => {
+  document.getElementById('pvdBookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    if (!document.getElementById('acceptTerms').checked) {
-      alert('Please accept the Terms & Conditions regarding sample handling and packaging.');
+    const nameInput = document.getElementById('customer_name');
+    const addressInput = document.getElementById('address');
+    
+    const name = nameInput ? nameInput.value.trim() : '';
+    const address = addressInput ? addressInput.value.trim() : '';
+
+    let role = document.getElementById('user_role').value;
+    if (role === 'Other') {
+      role = document.getElementById('role_other_text').value.trim() || 'Other';
+    }
+
+    let animal = document.getElementById('animal_type').value;
+    if (animal === 'Other') {
+      animal = document.getElementById('animal_other_text').value.trim() || 'Other';
+    }
+
+    const cowId = document.getElementById('cow_id').value.trim() || 'N/A';
+    const visitDate = document.getElementById('visit_date').value;
+    const visitSlot = document.getElementById('visit_slot').value;
+
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+    let selectedCategories = Array.from(checkboxes).map(cb => cb.value);
+
+    if (document.getElementById('chkOtherTest') && document.getElementById('chkOtherTest').checked) {
+      const customTestName = document.getElementById('test_other_text').value.trim();
+      selectedCategories = selectedCategories.filter(item => item !== 'Other');
+      selectedCategories.push(customTestName ? `Custom Test: ${customTestName}` : 'Custom Diagnostic Request');
+    }
+
+    if (selectedCategories.length === 0) {
+      alert("Please select at least one required test type.");
       return;
     }
 
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.innerText = "⏳ Processing Request...";
     submitBtn.disabled = true;
+    submitBtn.innerText = "⏳ Submitting...";
 
-    const ownerName = document.getElementById('ownerName').value;
     const urlParams = new URLSearchParams(window.location.search);
-    const ownerPhone = document.getElementById('ownerPhone').value.trim() || urlParams.get('phone') || '919921272285';
-
-    const horses = [];
-    document.querySelectorAll('.horse-block').forEach((card, idx) => {
-      horses.push({
-        horse_name: card.querySelector('.h-name')?.value || `Horse #${idx + 1}`,
-        microchip: card.querySelector('.h-chip')?.value || 'N/A',
-        gender: card.querySelector('.h-gender')?.value || 'N/A',
-        age: card.querySelector('.h-age')?.value || 'N/A',
-        breed: card.querySelector('.h-breed')?.value || 'N/A',
-        color: card.querySelector('.h-color')?.value || 'N/A',
-        markings: card.querySelector('.h-markings')?.value || 'N/A'
-      });
-    });
+    const farmerPhone = urlParams.get('phone') || urlParams.get('bsuid') || '919921272285';
 
     const payload = {
-      owner_name: ownerName,
-      phone: ownerPhone,
-      phone_number: ownerPhone,
-      alt_phone: document.getElementById('altPhone')?.value || 'N/A',
-      address: document.getElementById('address')?.value || 'N/A',
+      customer_name: name,
+      farmerName: name,
+      phone_number: farmerPhone,
+      phone: farmerPhone,
+      user_role: role,
+      animal_type: animal,
+      animalType: animal,
+      cow_id: cowId,
+      tagNo: cowId,
+      selected_test_ids: selectedCategories,
+      testTypes: selectedCategories,
+      address: address,
+      pincode: '412307',
+      visit_date: visitDate,
+      preferredDate: visitDate,
+      visit_slot: visitSlot,
+      preferredTimeSlot: visitSlot,
       latitude: capturedLat || '',
       longitude: capturedLng || '',
-      horses: horses,
-      tests: ['EIA (Coggins Test)', 'Glanders (CFT)']
+      bsuid: farmerPhone
     };
 
     try {
-      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/register-equine-camp', {
+      const response = await fetch('https://pvd-api-142133401500.asia-south1.run.app/book-slot', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-      
-      const resData = await response.json();
 
-      if (response.ok && resData.success) {
-        alert(
-          `🎉 Booking Request Successful!\n\n` +
-          `Event: Japalouppe Winter Show 2026\n` +
-          `Pass ID: ${resData.passId}\n` +
-          `Registered ${horses.length} Horse(s).\n\n` +
-          `📌 IMPORTANT REMINDERS:\n` +
-          `• Serum sample required (₹1,650/- per sample)\n` +
-          `• Label horse name on each tube\n` +
-          `• Pack in ziplock bag inside a thermocol box with ice pack\n` +
-          `• Confirm pickup arrangements before sample withdrawal\n\n` +
-          `Full instructions and pass details have been sent to your WhatsApp!`
-        );
+      const data = await response.json();
 
+      if (response.ok && data.success) {
+        const refId = data.orderId || data.bookingId || "Confirmed";
+        alert("🎉 Request Submitted!\n\nBooking ID: " + refId + "\n\nRedirecting back to WhatsApp...");
         redirectToWhatsApp("919921272285");
       } else {
-        alert('Error: ' + (resData.error || 'Submission failed.'));
-        submitBtn.innerText = "Test Booking Request";
-        submitBtn.disabled = false;
+        alert("⚠️ Notice: " + (data.error || "Unable to submit booking."));
       }
     } catch (err) {
-      console.error('Fetch Error:', err);
-      alert('Connection Error: Unable to reach PVD server. Please check your internet connection.');
-      submitBtn.innerText = "Test Booking Request";
+      console.error("Submission Error:", err);
+      alert("Connection Error: Unable to reach PVD server. Please check your internet connection.");
+    } finally {
       submitBtn.disabled = false;
+      submitBtn.innerText = "Request Sample Visit";
     }
   });
 </script>
-
 </body>
 </html>
